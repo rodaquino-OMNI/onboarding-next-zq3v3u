@@ -1,0 +1,184 @@
+<!-- Main enrollment container with accessibility attributes -->
+<div class="enrollment-container" role="main" aria-label="{{ 'ENROLLMENT.TITLE' | translate }}">
+  <!-- Header section -->
+  <header class="enrollment-header">
+    <h1 class="mat-h1">{{ 'ENROLLMENT.TITLE' | translate }}</h1>
+    <p class="mat-subtitle-1" role="status" *ngIf="enrollmentProgress">
+      {{ 'ENROLLMENT.PROGRESS' | translate: { progress: enrollmentProgress } }}
+    </p>
+  </header>
+
+  <!-- Multi-step enrollment form -->
+  <mat-horizontal-stepper 
+    #stepper="matHorizontalStepper" 
+    [linear]="true"
+    aria-label="{{ 'ENROLLMENT.STEPPER.LABEL' | translate }}"
+    class="enrollment-stepper">
+
+    <!-- Personal Information Step -->
+    <mat-step 
+      [stepControl]="personalInfoForm" 
+      [label]="'ENROLLMENT.STEPS.PERSONAL_INFO' | translate"
+      state="personal_info">
+      <form [formGroup]="personalInfoForm" class="step-form">
+        <div class="form-grid">
+          <!-- Personal Information Fields -->
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ENROLLMENT.FIELDS.FIRST_NAME' | translate }}</mat-label>
+            <input 
+              matInput 
+              formControlName="firstName" 
+              required 
+              [attr.aria-label]="'ENROLLMENT.FIELDS.FIRST_NAME' | translate">
+            <mat-error *ngIf="personalInfoForm.get('firstName')?.errors">
+              {{ 'ENROLLMENT.ERRORS.REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ENROLLMENT.FIELDS.LAST_NAME' | translate }}</mat-label>
+            <input 
+              matInput 
+              formControlName="lastName" 
+              required 
+              [attr.aria-label]="'ENROLLMENT.FIELDS.LAST_NAME' | translate">
+            <mat-error *ngIf="personalInfoForm.get('lastName')?.errors">
+              {{ 'ENROLLMENT.ERRORS.REQUIRED' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'ENROLLMENT.FIELDS.DATE_OF_BIRTH' | translate }}</mat-label>
+            <input 
+              matInput 
+              formControlName="dateOfBirth" 
+              [matDatepicker]="dobPicker" 
+              required 
+              [attr.aria-label]="'ENROLLMENT.FIELDS.DATE_OF_BIRTH' | translate">
+            <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+            <mat-datepicker #dobPicker></mat-datepicker>
+            <mat-error *ngIf="personalInfoForm.get('dateOfBirth')?.errors">
+              {{ 'ENROLLMENT.ERRORS.INVALID_DATE' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Document Upload Step -->
+    <mat-step 
+      [label]="'ENROLLMENT.STEPS.DOCUMENTS' | translate"
+      state="documents">
+      <app-document-upload
+        [enrollmentId]="enrollmentId"
+        (documentUploaded)="onDocumentUploaded($event)"
+        (uploadProgress)="onUploadProgress($event)"
+        (uploadError)="onUploadError($event)">
+      </app-document-upload>
+    </mat-step>
+
+    <!-- Health Declaration Step -->
+    <mat-step 
+      [label]="'ENROLLMENT.STEPS.HEALTH' | translate"
+      state="health">
+      <app-health-declaration
+        [formGroup]="healthForm"
+        (formValidation)="onHealthFormValidation($event)">
+      </app-health-declaration>
+    </mat-step>
+
+    <!-- Review Step -->
+    <mat-step 
+      [label]="'ENROLLMENT.STEPS.REVIEW' | translate"
+      state="review">
+      <div class="review-container" role="region" aria-label="{{ 'ENROLLMENT.REVIEW.TITLE' | translate }}">
+        <!-- Review Summary -->
+        <mat-card class="review-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'ENROLLMENT.REVIEW.SUMMARY' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="review-section" *ngIf="enrollmentData">
+              <!-- Personal Information Review -->
+              <h3 class="mat-h3">{{ 'ENROLLMENT.REVIEW.PERSONAL_INFO' | translate }}</h3>
+              <dl class="review-list">
+                <dt>{{ 'ENROLLMENT.FIELDS.FULL_NAME' | translate }}</dt>
+                <dd>{{enrollmentData.metadata.personal_info.firstName}} {{enrollmentData.metadata.personal_info.lastName}}</dd>
+                <dt>{{ 'ENROLLMENT.FIELDS.DATE_OF_BIRTH' | translate }}</dt>
+                <dd>{{enrollmentData.metadata.personal_info.dateOfBirth | date}}</dd>
+              </dl>
+
+              <!-- Documents Review -->
+              <h3 class="mat-h3">{{ 'ENROLLMENT.REVIEW.DOCUMENTS' | translate }}</h3>
+              <ul class="document-list" role="list">
+                <li *ngFor="let doc of enrollmentData.documents" role="listitem">
+                  <mat-icon aria-hidden="true">description</mat-icon>
+                  <span>{{doc.type}}</span>
+                  <mat-icon class="status-icon" [class.verified]="doc.status === 'VERIFIED'">
+                    {{doc.status === 'VERIFIED' ? 'check_circle' : 'pending'}}
+                  </mat-icon>
+                </li>
+              </ul>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Terms and Consent -->
+        <mat-card class="consent-card">
+          <mat-card-content>
+            <mat-checkbox 
+              formControlName="consent" 
+              required 
+              [attr.aria-label]="'ENROLLMENT.CONSENT.CHECKBOX' | translate">
+              {{ 'ENROLLMENT.CONSENT.TEXT' | translate }}
+            </mat-checkbox>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+
+  <!-- Navigation Controls -->
+  <div class="form-navigation" role="navigation" aria-label="{{ 'ENROLLMENT.NAVIGATION.LABEL' | translate }}">
+    <button 
+      mat-button 
+      (click)="previousStep()" 
+      [disabled]="!canGoBack"
+      [attr.aria-label]="'ENROLLMENT.BUTTONS.PREVIOUS' | translate">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'ENROLLMENT.BUTTONS.PREVIOUS' | translate }}
+    </button>
+
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="nextStep()" 
+      [disabled]="!canProceed"
+      [attr.aria-label]="'ENROLLMENT.BUTTONS.NEXT' | translate">
+      {{ stepper.selectedIndex === stepper.steps.length - 1 ? 
+        ('ENROLLMENT.BUTTONS.SUBMIT' | translate) : 
+        ('ENROLLMENT.BUTTONS.NEXT' | translate) }}
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div 
+    class="loading-overlay" 
+    *ngIf="isLoading" 
+    role="alert" 
+    aria-live="polite">
+    <mat-spinner diameter="48"></mat-spinner>
+    <span class="loading-text">{{ 'ENROLLMENT.LOADING' | translate }}</span>
+  </div>
+
+  <!-- Error Messages -->
+  <div 
+    *ngIf="errorMessage" 
+    class="error-message" 
+    role="alert" 
+    aria-live="assertive">
+    <mat-icon>error</mat-icon>
+    {{ errorMessage }}
+  </div>
+</div>
