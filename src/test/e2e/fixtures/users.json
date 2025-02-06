@@ -1,0 +1,141 @@
+{
+  "admin": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Admin User",
+    "email": "admin@austa.health",
+    "password": "Admin@123",
+    "role": "admin",
+    "language": "en",
+    "preferences": {
+      "theme": "light",
+      "notifications": true,
+      "timezone": "UTC",
+      "accessibility": {
+        "high_contrast": false,
+        "font_size": "medium"
+      },
+      "dashboard_layout": "compact"
+    },
+    "security_settings": {
+      "mfa_enabled": true,
+      "last_password_change": "2024-01-01T00:00:00Z",
+      "password_expires_at": "2024-04-01T00:00:00Z",
+      "allowed_ip_ranges": ["10.0.0.0/24"]
+    },
+    "compliance_data": {
+      "gdpr_consent": true,
+      "gdpr_consent_date": "2024-01-01T00:00:00Z",
+      "hipaa_training_date": "2024-01-01T00:00:00Z",
+      "data_access_level": "full"
+    },
+    "email_verified_at": "2024-01-01T00:00:00Z",
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "last_login_at": "2024-01-01T00:00:00Z"
+  },
+  "broker": {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "name": "Broker User",
+    "email": "broker@austa.health",
+    "password": "Broker@123",
+    "role": "broker",
+    "language": "pt-BR",
+    "preferences": {
+      "theme": "dark",
+      "notifications": true,
+      "timezone": "America/Sao_Paulo",
+      "accessibility": {
+        "high_contrast": true,
+        "font_size": "large"
+      },
+      "dashboard_layout": "detailed"
+    },
+    "security_settings": {
+      "mfa_enabled": true,
+      "last_password_change": "2024-01-01T00:00:00Z",
+      "password_expires_at": "2024-04-01T00:00:00Z",
+      "allowed_ip_ranges": ["192.168.1.0/24"]
+    },
+    "compliance_data": {
+      "gdpr_consent": true,
+      "gdpr_consent_date": "2024-01-01T00:00:00Z",
+      "hipaa_training_date": "2024-01-01T00:00:00Z",
+      "data_access_level": "restricted"
+    },
+    "email_verified_at": "2024-01-01T00:00:00Z",
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "last_login_at": "2024-01-01T00:00:00Z"
+  },
+  "interviewer": {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "name": "Medical Interviewer",
+    "email": "interviewer@austa.health",
+    "password": "Interview@123",
+    "role": "interviewer",
+    "language": "pt-BR",
+    "preferences": {
+      "theme": "light",
+      "notifications": true,
+      "timezone": "America/Sao_Paulo",
+      "accessibility": {
+        "high_contrast": false,
+        "font_size": "medium"
+      },
+      "dashboard_layout": "calendar"
+    },
+    "security_settings": {
+      "mfa_enabled": true,
+      "last_password_change": "2024-01-01T00:00:00Z",
+      "password_expires_at": "2024-04-01T00:00:00Z",
+      "allowed_ip_ranges": ["172.16.0.0/24"]
+    },
+    "compliance_data": {
+      "gdpr_consent": true,
+      "gdpr_consent_date": "2024-01-01T00:00:00Z",
+      "hipaa_training_date": "2024-01-01T00:00:00Z",
+      "data_access_level": "medical"
+    },
+    "email_verified_at": "2024-01-01T00:00:00Z",
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "last_login_at": "2024-01-01T00:00:00Z"
+  },
+  "individual": {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "name": "Individual User",
+    "email": "individual@example.com",
+    "password": "Individual@123",
+    "role": "individual",
+    "language": "pt-BR",
+    "preferences": {
+      "theme": "auto",
+      "notifications": true,
+      "timezone": "America/Sao_Paulo",
+      "accessibility": {
+        "high_contrast": false,
+        "font_size": "medium"
+      },
+      "dashboard_layout": "simple"
+    },
+    "security_settings": {
+      "mfa_enabled": false,
+      "last_password_change": "2024-01-01T00:00:00Z",
+      "password_expires_at": "2024-04-01T00:00:00Z",
+      "allowed_ip_ranges": []
+    },
+    "compliance_data": {
+      "gdpr_consent": true,
+      "gdpr_consent_date": "2024-01-01T00:00:00Z",
+      "hipaa_consent": true,
+      "hipaa_consent_date": "2024-01-01T00:00:00Z",
+      "lgpd_consent": true,
+      "lgpd_consent_date": "2024-01-01T00:00:00Z",
+      "data_access_level": "self"
+    },
+    "email_verified_at": "2024-01-01T00:00:00Z",
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "last_login_at": "2024-01-01T00:00:00Z"
+  }
+}
