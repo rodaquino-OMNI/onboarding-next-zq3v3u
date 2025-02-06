@@ -1,0 +1,172 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/web/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/web/**'
+      - '.github/workflows/frontend-ci.yml'
+
+env:
+  NODE_VERSION: '16.x'
+  COVERAGE_THRESHOLD: 80
+  BUNDLE_SIZE_LIMIT: '2MB'
+
+jobs:
+  lint:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/web/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: src/web
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: src/web
+        run: npm run lint
+        
+      - name: TypeScript Compilation Check
+        working-directory: src/web
+        run: npx tsc --noEmit
+
+  build:
+    name: Build Application
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        language: [en-US, pt-BR]
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/web/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: src/web
+        run: npm ci
+
+      - name: Build Application
+        working-directory: src/web
+        run: |
+          npm run build -- \
+            --configuration production \
+            --i18nLocale ${{ matrix.language }} \
+            --outputPath dist/${{ matrix.language }}
+
+      - name: Analyze Bundle Size
+        working-directory: src/web
+        run: |
+          npm run analyze
+          if [ $(stat -f%z "dist/${{ matrix.language }}/main.*.js") -gt $(numfmt --from=iec ${{ env.BUNDLE_SIZE_LIMIT }}) ]; then
+            echo "Bundle size exceeds limit of ${{ env.BUNDLE_SIZE_LIMIT }}"
+            exit 1
+          fi
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-${{ matrix.language }}
+          path: src/web/dist/${{ matrix.language }}
+          retention-days: 5
+
+  test:
+    name: Run Tests
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-type: [unit, e2e]
+        
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/web/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: src/web
+        run: npm ci
+
+      - name: Run Unit Tests
+        if: matrix.test-type == 'unit'
+        working-directory: src/web
+        run: |
+          npm run test -- --no-watch --code-coverage
+          if [ $(jq -r '.total.lines.pct' coverage/coverage-summary.json) -lt ${{ env.COVERAGE_THRESHOLD }} ]; then
+            echo "Coverage below threshold of ${{ env.COVERAGE_THRESHOLD }}%"
+            exit 1
+          fi
+
+      - name: Run E2E Tests
+        if: matrix.test-type == 'e2e'
+        working-directory: src/web
+        run: npm run e2e -- --configuration=ci
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.test-type }}
+          path: |
+            src/web/coverage
+            src/web/test-results
+          retention-days: 5
+
+  analyze:
+    name: Security Analysis
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/web/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: src/web
+        run: npm ci
+
+      - name: Run Security Scan
+        working-directory: src/web
+        run: npm run security-scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Generate Documentation
+        working-directory: src/web
+        run: npm run compodoc
+
+      - name: Upload Documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: src/web/documentation
+          retention-days: 5
