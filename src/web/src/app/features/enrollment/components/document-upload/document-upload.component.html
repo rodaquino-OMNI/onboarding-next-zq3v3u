@@ -1,0 +1,126 @@
+<!-- Main document upload container with ARIA label -->
+<div class="document-upload-container" 
+     role="region" 
+     [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.ARIA_LABEL' | translate">
+
+  <!-- Header section -->
+  <header class="upload-header">
+    <h2 class="upload-title">{{ 'ENROLLMENT.DOCUMENT_UPLOAD.TITLE' | translate }}</h2>
+    <p class="upload-description">{{ 'ENROLLMENT.DOCUMENT_UPLOAD.DESCRIPTION' | translate }}</p>
+  </header>
+
+  <!-- Document upload area -->
+  <div class="upload-area" 
+       [class.dragover]="isDragging"
+       [attr.aria-busy]="isUploading">
+    <app-file-upload
+      [enrollmentId]="enrollmentId"
+      [documentType]="documentType"
+      [acceptedTypes]="'.pdf,.jpg,.jpeg,.png'"
+      [maxFileSize]="10485760"
+      [maxRetries]="3"
+      [securityToken]="securityToken"
+      (uploadComplete)="documentUploaded($event)"
+      (uploadError)="uploadError($event)"
+      (uploadProgress)="updateProgress($event)"
+      (fileValidation)="handleValidation($event)">
+    </app-file-upload>
+  </div>
+
+  <!-- Upload progress section -->
+  <div *ngIf="isUploading" 
+       class="progress-section"
+       role="status"
+       [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.UPLOAD_PROGRESS' | translate">
+    <mat-progress-bar
+      mode="determinate"
+      [value]="uploadProgress"
+      aria-live="polite">
+    </mat-progress-bar>
+    <span class="progress-text">
+      {{ uploadProgress }}% {{ 'ENROLLMENT.DOCUMENT_UPLOAD.COMPLETE' | translate }}
+    </span>
+  </div>
+
+  <!-- OCR processing status -->
+  <div *ngIf="isProcessing" 
+       class="ocr-status"
+       role="status"
+       [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.OCR_PROGRESS' | translate">
+    <mat-progress-bar
+      mode="indeterminate"
+      aria-live="polite">
+    </mat-progress-bar>
+    <div class="ocr-status-text">
+      <mat-icon aria-hidden="true">document_scanner</mat-icon>
+      <span>{{ 'ENROLLMENT.DOCUMENT_UPLOAD.OCR_PROCESSING' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Error messages -->
+  <div *ngIf="uploadError" 
+       class="error-container"
+       role="alert"
+       aria-live="assertive">
+    <mat-icon color="warn" aria-hidden="true">error_outline</mat-icon>
+    <span class="error-message">{{ errorMessage | translate }}</span>
+  </div>
+
+  <!-- Validation error messages -->
+  <div *ngIf="validationError" 
+       class="validation-error"
+       role="status"
+       aria-live="polite">
+    <mat-icon color="warn" aria-hidden="true">warning</mat-icon>
+    <span>{{ validationMessage | translate }}</span>
+  </div>
+
+  <!-- Document type requirements -->
+  <div class="requirements-container" 
+       role="complementary"
+       [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.REQUIREMENTS' | translate">
+    <h3 class="requirements-title">
+      {{ 'ENROLLMENT.DOCUMENT_UPLOAD.REQUIREMENTS_TITLE' | translate }}
+    </h3>
+    <ul class="requirements-list">
+      <li>{{ 'ENROLLMENT.DOCUMENT_UPLOAD.REQUIREMENT_FORMAT' | translate }}</li>
+      <li>{{ 'ENROLLMENT.DOCUMENT_UPLOAD.REQUIREMENT_SIZE' | translate }}</li>
+      <li>{{ 'ENROLLMENT.DOCUMENT_UPLOAD.REQUIREMENT_QUALITY' | translate }}</li>
+    </ul>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="action-buttons"
+       role="group"
+       [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.ACTIONS' | translate">
+    <button mat-button
+            *ngIf="isUploading"
+            (click)="cancelUpload()"
+            type="button"
+            class="cancel-button"
+            [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.CANCEL' | translate">
+      <mat-icon aria-hidden="true">cancel</mat-icon>
+      {{ 'ENROLLMENT.DOCUMENT_UPLOAD.CANCEL' | translate }}
+    </button>
+    <button mat-raised-button
+            color="primary"
+            [disabled]="isUploading || isProcessing"
+            (click)="triggerFileInput()"
+            type="button"
+            class="upload-button"
+            [attr.aria-label]="'ENROLLMENT.DOCUMENT_UPLOAD.SELECT_FILE' | translate">
+      <mat-icon aria-hidden="true">upload_file</mat-icon>
+      {{ 'ENROLLMENT.DOCUMENT_UPLOAD.SELECT_FILE' | translate }}
+    </button>
+  </div>
+
+  <!-- Screen reader only status messages -->
+  <div class="sr-only" aria-live="polite">
+    <span *ngIf="isUploading">
+      {{ 'ENROLLMENT.DOCUMENT_UPLOAD.SR_UPLOADING' | translate }}
+    </span>
+    <span *ngIf="isProcessing">
+      {{ 'ENROLLMENT.DOCUMENT_UPLOAD.SR_PROCESSING' | translate }}
+    </span>
+  </div>
+</div>
