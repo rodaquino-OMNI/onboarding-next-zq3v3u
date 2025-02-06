@@ -1,0 +1,266 @@
+name: AUSTA Integration Platform Test Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  CI: true
+  NODE_ENV: test
+  PHP_ENV: testing
+  COVERAGE_THRESHOLD: 80
+  UNIT_TEST_TIMEOUT: 300
+  INTEGRATION_TEST_TIMEOUT: 900
+  E2E_TEST_TIMEOUT: 1200
+  SECURITY_SCAN_TIMEOUT: 600
+
+jobs:
+  setup:
+    name: Setup Test Environment
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.value }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate cache key
+        id: cache-key
+        run: echo "value=${{ github.sha }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath, redis
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            vendor
+            node_modules
+          key: ${{ runner.os }}-deps-${{ steps.cache-key.outputs.value }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist
+          npm ci
+
+  unit-tests:
+    name: Unit Tests
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            vendor
+            node_modules
+          key: ${{ runner.os }}-deps-${{ needs.setup.outputs.cache-key }}
+
+      - name: Run frontend unit tests
+        run: |
+          npm run test:unit -- --coverage --maxWorkers=2 --ci
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ./coverage/jest
+
+      - name: Run backend unit tests
+        run: |
+          vendor/bin/phpunit --testsuite=Unit --coverage-clover=coverage/clover.xml
+        env:
+          XDEBUG_MODE: coverage
+
+      - name: Check coverage threshold
+        run: |
+          if [[ $(grep -Po "(?<=<coverage-report>.+)(?=</coverage-report>)" coverage/clover.xml) < $COVERAGE_THRESHOLD ]]; then
+            echo "Coverage below threshold of $COVERAGE_THRESHOLD%"
+            exit 1
+          fi
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-reports
+          path: coverage/
+          retention-days: 14
+
+  integration-tests:
+    name: Integration Tests
+    needs: [setup, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: austa_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          MYSQL_ROOT_PASSWORD: root_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:6.0-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, pdo_mysql, redis
+          coverage: none
+
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            vendor
+            node_modules
+          key: ${{ runner.os }}-deps-${{ needs.setup.outputs.cache-key }}
+
+      - name: Run database migrations
+        run: php artisan migrate:fresh --seed --env=testing
+
+      - name: Run integration tests
+        run: |
+          vendor/bin/phpunit --testsuite=Integration --log-junit=./coverage/integration.xml
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: austa_test
+          DB_USERNAME: test_user
+          DB_PASSWORD: test_password
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+
+  e2e-tests:
+    name: E2E Tests
+    needs: [setup, integration-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-deps-${{ needs.setup.outputs.cache-key }}
+
+      - name: Install Cypress
+        run: npm install cypress@latest
+
+      - name: Run E2E tests
+        run: |
+          npm run test:e2e -- --headless --browser chrome
+        env:
+          CYPRESS_baseUrl: http://localhost:8000
+          CYPRESS_VIDEO: false
+
+      - name: Run accessibility tests
+        run: |
+          npm run test:a11y -- --headless
+        continue-on-error: true
+
+  security-scan:
+    name: Security Scan
+    needs: [setup, e2e-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run OWASP ZAP scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost:8000'
+          rules_file_name: 'zap-rules.tsv'
+          cmd_options: '-a'
+
+      - name: Check for vulnerabilities
+        run: |
+          if grep -q "High Risk Vulnerabilities: [1-9]" zap-report.html; then
+            echo "High risk vulnerabilities detected"
+            exit 1
+          fi
+
+  report:
+    name: Generate Reports
+    needs: [unit-tests, integration-tests, e2e-tests, security-scan]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-reports
+          path: coverage
+
+      - name: Generate consolidated report
+        run: |
+          npm install -g nyc junit-merge
+          nyc merge coverage coverage-final.json
+          nyc report --reporter=html --reporter=text-summary
+          junit-merge --dir coverage --out junit-final.xml
+
+      - name: Upload final reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            coverage/
+            junit-final.xml
+            zap-report.html
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          curl -X POST ${{ secrets.ALERT_WEBHOOK }} \
+            -H "Content-Type: application/json" \
+            -d '{"text":"Test pipeline failed for commit ${{ github.sha }}"}'
