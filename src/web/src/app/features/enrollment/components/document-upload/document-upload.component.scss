@@ -1,0 +1,144 @@
+@use '../../../../assets/scss/variables' as vars;
+@use '../../../../assets/scss/mixins' as mix;
+
+// Global theme variables
+:root {
+  --document-upload-transition: #{vars.$transition-duration} ease-in-out;
+  --document-upload-border-color: rgba(vars.$primary, 0.3);
+}
+
+[data-theme='dark'] {
+  --document-upload-border-color: rgba(vars.$primary, 0.6);
+}
+
+// Main container
+.document-upload-container {
+  display: flex;
+  flex-direction: column;
+  padding: calc(#{vars.$spacing-unit} * 3);
+  background-color: var(--surface-color);
+  border-radius: vars.$border-radius-md;
+  contain: content;
+  @include mix.elevation(2);
+
+  @include mix.responsive-breakpoint(xs) {
+    padding: vars.$spacing-unit;
+  }
+
+  @include mix.responsive-breakpoint(sm) {
+    padding: calc(#{vars.$spacing-unit} * 2);
+  }
+}
+
+// Upload area with drag & drop support
+.upload-area {
+  min-height: 200px;
+  border: 2px dashed var(--document-upload-border-color);
+  border-radius: vars.$border-radius-md;
+  margin: calc(#{vars.$spacing-unit} * 2) 0;
+  transition: var(--document-upload-transition);
+  @include mix.flex-center;
+
+  &:focus-within {
+    @include mix.focus-outline;
+  }
+
+  &.dragover {
+    border-color: vars.$primary;
+    background-color: rgba(vars.$primary, 0.1);
+  }
+
+  @include mix.responsive-breakpoint(xs) {
+    min-height: 150px;
+  }
+
+  @include mix.reduced-motion {
+    transition: none;
+  }
+}
+
+// Progress section
+.progress-section {
+  margin-top: calc(#{vars.$spacing-unit} * 2);
+  padding: vars.$spacing-unit;
+  background-color: var(--surface-color);
+  border-radius: vars.$border-radius-sm;
+  @include mix.elevation(1);
+}
+
+// Progress bar component
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  margin: vars.$spacing-unit 0;
+  background-color: rgba(vars.$primary, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    background-color: vars.$primary;
+    transition: width var(--document-upload-transition);
+
+    @include mix.reduced-motion {
+      transition: none;
+    }
+  }
+}
+
+// OCR status display
+.ocr-status {
+  margin-top: calc(#{vars.$spacing-unit} * 2);
+  padding: vars.$spacing-unit;
+  background-color: var(--surface-color);
+  border-radius: vars.$border-radius-sm;
+  @include mix.elevation(1);
+
+  &__label {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  &__value {
+    color: var(--text-secondary);
+    margin-left: vars.$spacing-unit;
+  }
+}
+
+// Error message styling
+.error-message {
+  color: vars.$error;
+  margin-top: vars.$spacing-unit;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: vars.$spacing-unit;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+// Screen reader only text
+.sr-only {
+  @include mix.screen-reader-only;
+}
+
+// Accessibility enhancements
+[role="button"],
+[role="tab"] {
+  @include mix.focus-outline;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .document-upload-container *,
+  .upload-area,
+  .progress-bar__fill {
+    transition: none !important;
+    animation: none !important;
+  }
+}
