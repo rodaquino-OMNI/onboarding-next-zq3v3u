@@ -1,0 +1,117 @@
+# Version Control
+.git
+.gitignore
+.gitattributes
+.github
+.gitlab-ci.yml
+
+# Dependencies and Package Managers
+vendor/*
+node_modules
+composer.lock
+package-lock.json
+yarn.lock
+
+# Environment and Configuration
+.env
+.env.*
+!.env.example
+.env.testing
+.env.dusk.local
+.env.backup
+
+# Development and IDE Files
+.editorconfig
+.php-cs-fixer.dist.php
+.php-cs-fixer.cache
+.phpunit.result.cache
+phpstan.neon
+phpunit.xml
+README.md
+CHANGELOG.md
+docker-compose*.yml
+Dockerfile*
+.idea
+.vscode
+*.sublime-*
+*.swp
+*.swo
+
+# Storage and Cache
+storage/app/*
+storage/framework/cache/**/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+storage/debugbar/*
+bootstrap/cache/*
+
+# Test Files and Coverage Reports
+tests
+phpunit.xml
+.phpunit.result.cache
+tests/Coverage/*
+coverage.xml
+.coverage
+.phpunit.cache
+
+# Security and Sensitive Data
+storage/oauth-*
+.ssh
+*.key
+*.pem
+*.crt
+*.csr
+*.p12
+id_rsa*
+storage/phi/*
+storage/health-records/*
+*.phi
+*.health
+
+# Documentation
+docs
+*.md
+apidoc
+swagger
+
+# Temporary Files
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+temp/*
+tmp/*
+
+# Build and Deployment
+build/*
+dist/*
+public/build
+public/hot
+public/storage
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Monitoring and Debugging
+storage/clockwork/*
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+
+# Backup Files
+*.bak
+*.backup
+*.old
+*.swp
+*~
+
+# Local Development
+docker/local/*
+docker-compose.override.yml
