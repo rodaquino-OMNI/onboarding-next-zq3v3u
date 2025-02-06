@@ -1,0 +1,55 @@
+{
+  "name": "austa-health",
+  "integrations": {
+    "capacitor": {
+      "enabled": true,
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "preferences": {
+        "encryption": true,
+        "biometricAuth": true,
+        "secureStorage": true
+      }
+    },
+    "cordova": {
+      "enabled": false
+    }
+  },
+  "type": "angular",
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "https://api.austa.health",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug",
+      "headers": {
+        "X-Platform": "mobile",
+        "X-Security-Version": "1.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff"
+      }
+    }
+  ],
+  "security": {
+    "contentSecurityPolicy": true,
+    "allowedOrigins": [
+      "https://api.austa.health"
+    ],
+    "requireHttps": true
+  },
+  "build": {
+    "webDir": "www",
+    "sourceMap": false,
+    "optimization": true,
+    "aot": true,
+    "extractCss": true,
+    "namedChunks": false,
+    "vendorChunk": true,
+    "commonChunk": true,
+    "verbose": false
+  }
+}
