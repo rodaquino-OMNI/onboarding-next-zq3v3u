@@ -1,0 +1,22 @@
+<div *ngIf="isVisible" 
+     class="loading-container"
+     role="alert"
+     aria-live="polite"
+     aria-busy="true"
+     aria-atomic="true">
+    
+    <div class="loading-spinner"
+         role="progressbar"
+         aria-label="Loading in progress">
+        <mat-progress-spinner
+            mode="indeterminate"
+            diameter="48"
+            color="primary">
+        </mat-progress-spinner>
+    </div>
+
+    <p class="loading-message"
+       aria-live="polite">
+        {{message}}
+    </p>
+</div>
