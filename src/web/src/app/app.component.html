@@ -1,0 +1,147 @@
+<!-- Main application container with WCAG AAA compliance -->
+<div class="app-container" role="application" aria-label="AUSTA Integration Platform">
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" 
+     class="skip-link" 
+     [attr.aria-label]="'common.accessibility.skip_to_content' | translate">
+    {{ 'common.accessibility.skip_to_content' | translate }}
+  </a>
+
+  <!-- Global header with theme and authentication controls -->
+  <app-header
+    [theme]="currentTheme$ | async"
+    [userProfile]="userProfile$ | async"
+    (toggleTheme)="onThemeToggle($event)"
+    (toggleSidebar)="onSidebarToggle()"
+    (logout)="onLogout()"
+    role="banner"
+    aria-label="Global header">
+  </app-header>
+
+  <!-- Main content container with responsive layout -->
+  <div class="main-container" [class.sidebar-expanded]="!sidebarCollapsed">
+    <!-- Navigation sidebar with dynamic menu -->
+    <app-sidebar
+      [isCollapsed]="sidebarCollapsed"
+      [menuItems]="navigationItems$ | async"
+      (toggleSidebar)="onSidebarToggle()"
+      role="navigation"
+      aria-label="Main navigation">
+    </app-sidebar>
+
+    <!-- Main content area with dynamic routing -->
+    <main id="main-content" 
+          class="content-area" 
+          role="main" 
+          [attr.aria-label]="'common.accessibility.main_content' | translate"
+          [ngClass]="{
+            'content-collapsed': sidebarCollapsed,
+            'theme-dark': isDarkTheme$ | async,
+            'loading': isLoading$ | async
+          }">
+      <!-- Loading indicator -->
+      <mat-progress-bar 
+        *ngIf="isLoading$ | async"
+        mode="indeterminate"
+        aria-label="Loading content">
+      </mat-progress-bar>
+
+      <!-- Error message display -->
+      <div *ngIf="error$ | async as error" 
+           class="error-container" 
+           role="alert"
+           aria-live="assertive">
+        {{ error }}
+      </div>
+
+      <!-- Dynamic content router outlet -->
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- Notification container for screen readers -->
+  <div class="sr-only" 
+       aria-live="polite" 
+       [attr.aria-atomic]="true">
+    {{ screenReaderNotification$ | async }}
+  </div>
+</div>
+
+<!-- Theme styles for WCAG AAA compliance -->
+<style [innerHTML]="themeStyles$ | async"></style>
+
+<!-- Responsive styles -->
+<style>
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--background-color);
+    color: var(--text-color);
+  }
+
+  .main-container {
+    display: flex;
+    flex: 1;
+    position: relative;
+  }
+
+  .content-area {
+    flex: 1;
+    padding: var(--content-padding);
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .content-area.content-collapsed {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: var(--contrast-color);
+    text-decoration: none;
+  }
+
+  .skip-link:focus {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .error-container {
+    padding: 1rem;
+    margin: 1rem 0;
+    background: var(--error-background);
+    color: var(--error-color);
+    border-radius: 4px;
+  }
+
+  /* Responsive breakpoints */
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column;
+    }
+
+    .content-area {
+      margin-left: 0 !important;
+      padding: var(--content-padding-mobile);
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .content-area {
+      padding: var(--content-padding-tablet);
+    }
+  }
+
+  /* High contrast mode support */
+  @media (forced-colors: active) {
+    .app-container {
+      forced-color-adjust: none;
+    }
+  }
+</style>
