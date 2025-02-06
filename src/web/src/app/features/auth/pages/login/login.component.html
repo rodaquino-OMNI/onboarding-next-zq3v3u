@@ -1,0 +1,163 @@
+<!-- Main container with WCAG AAA compliant contrast and responsive layout -->
+<div class="login-container" role="main" aria-label="{{ 'auth.login.title' | translate }}">
+  <!-- Login card with Material elevation and security headers -->
+  <div class="login-card mat-elevation-z8">
+    <!-- Header section with branding and language selection -->
+    <header class="login-header">
+      <img 
+        src="assets/images/logo.svg" 
+        [alt]="'common.branding.logo_alt' | translate" 
+        class="login-logo"
+        width="180" 
+        height="48" 
+        loading="lazy">
+      
+      <!-- Language selector with ARIA support -->
+      <app-language-selector 
+        class="language-selector"
+        aria-label="{{ 'accessibility.screen_reader.language_selector' | translate }}">
+      </app-language-selector>
+    </header>
+
+    <!-- Login form with comprehensive security measures -->
+    <form 
+      [formGroup]="loginForm" 
+      (ngSubmit)="onSubmit()" 
+      class="login-form"
+      autocomplete="off"
+      novalidate
+      aria-label="{{ 'auth.login.form_label' | translate }}">
+
+      <!-- Email field with validation -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'auth.login.email_label' | translate }}</mat-label>
+        <input 
+          matInput
+          type="email"
+          formControlName="email"
+          required
+          autocomplete="email"
+          [placeholder]="'auth.login.email_placeholder' | translate"
+          aria-required="true">
+        <mat-error *ngIf="loginForm.get('email').errors">
+          {{ getErrorMessage('email') | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Password field with visibility toggle -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'auth.login.password_label' | translate }}</mat-label>
+        <input 
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          formControlName="password"
+          required
+          autocomplete="current-password"
+          [placeholder]="'auth.login.password_placeholder' | translate"
+          aria-required="true">
+        <button 
+          mat-icon-button 
+          type="button"
+          matSuffix 
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'auth.login.toggle_password' | translate"
+          [attr.aria-pressed]="!hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="loginForm.get('password').errors">
+          {{ getErrorMessage('password') | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- MFA token field (shown when required) -->
+      <mat-form-field 
+        *ngIf="showMFAInput"
+        appearance="outline" 
+        class="form-field">
+        <mat-label>{{ 'auth.login.mfa_label' | translate }}</mat-label>
+        <input 
+          matInput
+          type="text"
+          formControlName="mfaToken"
+          required
+          autocomplete="one-time-code"
+          [placeholder]="'auth.login.mfa_placeholder' | translate"
+          maxlength="6"
+          pattern="\d{6}"
+          aria-required="true">
+        <mat-error *ngIf="loginForm.get('mfaToken').errors">
+          {{ getErrorMessage('mfaToken') | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Form actions -->
+      <div class="form-actions">
+        <mat-checkbox 
+          formControlName="rememberMe"
+          color="primary"
+          aria-label="{{ 'auth.login.remember_me' | translate }}">
+          {{ 'auth.login.remember_me' | translate }}
+        </mat-checkbox>
+
+        <a 
+          routerLink="/auth/forgot-password"
+          class="forgot-password"
+          aria-label="{{ 'auth.login.forgot_password' | translate }}">
+          {{ 'auth.login.forgot_password' | translate }}
+        </a>
+      </div>
+
+      <!-- Error message display -->
+      <div 
+        *ngIf="errorMessage"
+        class="error-message"
+        role="alert"
+        aria-live="polite">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit button with loading state -->
+      <button 
+        mat-raised-button 
+        color="primary"
+        type="submit"
+        class="submit-button"
+        [disabled]="loginForm.invalid || isLoading || isRateLimited"
+        aria-label="{{ 'auth.login.submit' | translate }}">
+        <mat-spinner 
+          *ngIf="isLoading" 
+          diameter="20"
+          aria-label="{{ 'common.accessibility.loading' | translate }}">
+        </mat-spinner>
+        <span *ngIf="!isLoading">{{ 'auth.login.submit' | translate }}</span>
+      </button>
+
+      <!-- Rate limit warning -->
+      <div 
+        *ngIf="isRateLimited"
+        class="rate-limit-warning"
+        role="alert"
+        aria-live="polite">
+        {{ 'auth.login.rate_limit_warning' | translate }}
+      </div>
+    </form>
+
+    <!-- Registration link -->
+    <div class="register-prompt">
+      <span>{{ 'auth.login.register_prompt' | translate }}</span>
+      <a 
+        routerLink="/auth/register"
+        aria-label="{{ 'auth.login.register_link' | translate }}">
+        {{ 'auth.login.register_link' | translate }}
+      </a>
+    </div>
+
+    <!-- LGPD compliance notice -->
+    <div 
+      class="privacy-notice"
+      role="note"
+      aria-label="{{ 'privacy.lgpd.notice_label' | translate }}">
+      {{ 'privacy.lgpd.login_notice' | translate }}
+    </div>
+  </div>
+</div>
