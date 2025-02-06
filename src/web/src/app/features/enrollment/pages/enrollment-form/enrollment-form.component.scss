@@ -1,0 +1,180 @@
+// Import core design system variables and mixins
+@use '../../../../../assets/scss/variables' as vars;
+@use '../../../../../assets/scss/mixins' as mix;
+
+// =============================================================================
+// Enrollment Form Container
+// =============================================================================
+
+.enrollment-form {
+  display: flex;
+  flex-direction: column;
+  gap: map-get(vars.$spacing, scale, md);
+  min-height: 100vh;
+  max-width: map-get(vars.$breakpoints, lg);
+  margin: 0 auto;
+  padding: map-get(vars.$spacing, scale, lg);
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  container-name: enrollment-form;
+
+  // Responsive styles
+  @include mix.responsive-breakpoint(xs) {
+    max-width: 100%;
+    padding: map-get(vars.$spacing, scale, sm);
+  }
+
+  @include mix.responsive-breakpoint(sm) {
+    max-width: map-get(vars.$breakpoints, sm);
+  }
+
+  @include mix.responsive-breakpoint(md) {
+    max-width: map-get(vars.$breakpoints, lg);
+  }
+}
+
+// =============================================================================
+// Form Sections
+// =============================================================================
+
+.form-section {
+  margin-bottom: map-get(vars.$spacing, scale, lg);
+  padding: map-get(vars.$spacing, scale, md);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  background-color: map-get(vars.$colors, surface, light);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, surface, dark);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  // Focus state
+  &:focus-within {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: map-get(vars.$colors, primary);
+
+    @media (forced-colors: active) {
+      border-color: Highlight;
+    }
+  }
+
+  // Error state
+  &.error {
+    border-color: map-get(vars.$colors, state, error);
+    background-color: rgba(map-get(vars.$colors, state, error), 0.05);
+  }
+
+  // Responsive styles
+  @include mix.responsive-breakpoint(xs) {
+    padding: map-get(vars.$spacing, scale, sm);
+  }
+}
+
+// =============================================================================
+// Form Controls
+// =============================================================================
+
+.form-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: map-get(vars.$spacing, scale, lg);
+  gap: map-get(vars.$spacing, scale, sm);
+  flex-wrap: wrap;
+
+  // Responsive styles
+  @include mix.responsive-breakpoint(xs) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+
+// =============================================================================
+// Progress Indicator
+// =============================================================================
+
+.progress-indicator {
+  height: 4px;
+  background-color: map-get(vars.$colors, primary);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  transition: width 0.3s ease-out;
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  // Accessibility attributes
+  &[role="progressbar"] {
+    position: relative;
+
+    &::before {
+      content: attr(aria-valuenow) "%";
+      position: absolute;
+      right: 0;
+      top: -20px;
+      font-size: 0.875rem;
+      color: map-get(vars.$colors, text, secondary, light);
+
+      @media (prefers-color-scheme: dark) {
+        color: map-get(vars.$colors, text, secondary, dark);
+      }
+    }
+  }
+}
+
+// =============================================================================
+// Print Styles
+// =============================================================================
+
+@media print {
+  .enrollment-form {
+    background: none;
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .form-section {
+    break-inside: avoid;
+    border: 1px solid #000;
+    box-shadow: none;
+    margin-bottom: map-get(vars.$spacing, scale, md);
+    page-break-inside: avoid;
+  }
+
+  .form-controls {
+    display: none;
+  }
+
+  .progress-indicator {
+    display: none;
+  }
+}
+
+// =============================================================================
+// High Contrast & Accessibility
+// =============================================================================
+
+@media (forced-colors: active) {
+  .form-section {
+    border: 2px solid CanvasText;
+    box-shadow: none;
+  }
+
+  .progress-indicator {
+    background-color: Highlight;
+  }
+}
+
+// Screen reader only text
+.sr-only {
+  @include mix.screen-reader-only;
+}
+
+// Keyboard focus styles
+:focus-visible {
+  @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+}
