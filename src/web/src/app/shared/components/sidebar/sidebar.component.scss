@@ -1,0 +1,186 @@
+// Import core design system variables and mixins
+@use '../../../assets/scss/variables' as vars;
+@use '../../../assets/scss/mixins' as mix;
+
+// Sidebar custom properties
+:root {
+  --sidebar-width: 280px;
+  --sidebar-width-collapsed: 64px;
+  --sidebar-z-index: 1000;
+  --sidebar-transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-touch-target: 48px;
+  --sidebar-focus-ring: 3px solid var(--primary);
+  --sidebar-overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+// Main sidebar container
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  background-color: var(--surface);
+  @include mix.elevation(2);
+  z-index: var(--sidebar-z-index);
+  transition: var(--sidebar-transition);
+  will-change: transform, width;
+  contain: layout size;
+  outline: none;
+  -webkit-overflow-scrolling: touch;
+  
+  // High contrast mode support
+  @media (forced-colors: active) {
+    border-right: 1px solid CanvasText;
+  }
+}
+
+// Navigation container
+.sidebar-nav {
+  @include mix.flex-layout(column, map-get(vars.$spacing, scale, xs));
+  padding: map-get(vars.$spacing, scale, md);
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
+  -webkit-overflow-scrolling: touch;
+
+  // Scrollbar styling
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar);
+    border-radius: 4px;
+  }
+}
+
+// Navigation items
+.nav-item {
+  @include mix.flex-layout(row, map-get(vars.$spacing, scale, xs));
+  align-items: center;
+  min-height: var(--sidebar-touch-target);
+  padding: map-get(vars.$spacing, scale, xs);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  text-decoration: none;
+  
+  // Enhanced focus states
+  @include mix.focus-outline(var(--primary), 2px, true);
+  
+  // Hover state
+  &:hover {
+    background-color: rgba(var(--primary-rgb), 0.08);
+  }
+
+  // Active state
+  &--active {
+    background-color: var(--primary);
+    color: var(--surface);
+    font-weight: map-get(vars.$typography, weights, medium);
+
+    &:hover {
+      background-color: var(--primary);
+    }
+  }
+
+  // Icon styling
+  .nav-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    margin-right: map-get(vars.$spacing, scale, xs);
+  }
+
+  // Label styling
+  .nav-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Collapsed state
+.sidebar--collapsed {
+  width: var(--sidebar-width-collapsed);
+
+  .nav-label {
+    display: none;
+  }
+
+  .nav-icon {
+    margin-right: 0;
+  }
+}
+
+// Mobile overlay
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--sidebar-overlay-bg);
+  backdrop-filter: blur(4px);
+  z-index: calc(var(--sidebar-z-index) - 1);
+  transition: opacity 200ms ease-in-out;
+}
+
+// Responsive breakpoints
+@media screen and (max-width: map-get(vars.$breakpoints, xs)) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 100%;
+    transition: transform 200ms ease-in-out;
+    touch-action: pan-y pinch-zoom;
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+
+  .sidebar-overlay {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+
+    &--visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+@media screen and (min-width: map-get(vars.$breakpoints, sm)) {
+  .sidebar {
+    transform: none;
+    touch-action: auto;
+  }
+}
+
+// Reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar-overlay,
+  .nav-item {
+    transition: none;
+  }
+}
+
+// Print styles
+@media print {
+  .sidebar,
+  .sidebar-overlay {
+    display: none;
+  }
+}
