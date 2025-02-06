@@ -1,0 +1,151 @@
+// Import core design system variables and mixins
+@use '../../../assets/scss/variables' as vars;
+@use '../../../assets/scss/mixins' as mix;
+
+// Global variables
+$upload-container-height: 200px;
+$upload-container-mobile-height: 150px;
+$upload-container-tablet-height: 180px;
+$min-touch-target-size: 44px;
+
+// Main upload container
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: $upload-container-height;
+  min-height: $min-touch-target-size;
+  border: 2px dashed vars.$primary;
+  border-radius: vars.$border-radius-md;
+  background-color: vars.$surface;
+  padding: vars.$spacing-unit * 2;
+  margin-bottom: vars.$spacing-unit;
+  box-shadow: vars.$shadow-md;
+  transition: all vars.$transition-duration vars.$transition-timing;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+
+  // Accessibility focus state
+  &:focus-visible {
+    outline: 3px solid vars.$primary;
+    outline-offset: 2px;
+  }
+
+  // High contrast mode support
+  @media (forced-colors: active) {
+    border: 3px solid currentColor;
+    box-shadow: none;
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  // RTL support
+  [dir="rtl"] & {
+    direction: rtl;
+  }
+
+  // Mobile responsive styles
+  @include mix.responsive-breakpoint('xs') {
+    height: $upload-container-mobile-height;
+    padding: vars.$spacing-unit;
+  }
+
+  // Tablet responsive styles
+  @include mix.responsive-breakpoint('sm') {
+    height: $upload-container-tablet-height;
+    padding: vars.$spacing-unit * 2;
+  }
+
+  // Container query for larger layouts
+  @container (min-width: 30em) {
+    flex-direction: row;
+    gap: vars.$spacing-unit * 2;
+  }
+}
+
+// Dragging state
+.upload-container--dragging {
+  background-color: rgba(vars.$primary, 0.15);
+  border-style: solid;
+  transform: scale(1.02);
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+// Loading state
+.upload-container--loading {
+  opacity: 0.7;
+  pointer-events: none;
+  cursor: wait;
+}
+
+// Error state
+.upload-container--error {
+  border-color: vars.$error;
+  animation: shake 0.4s ease-in-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Progress tracking container
+.progress-container {
+  width: 100%;
+  height: 4px;
+  margin-top: vars.$spacing-unit * 2;
+  background-color: vars.$surface;
+  border-radius: vars.$border-radius-md;
+  overflow: hidden;
+  position: relative;
+
+  // Hide in print
+  @media print {
+    display: none;
+  }
+}
+
+// Progress bar animation
+.progress-bar {
+  height: 100%;
+  background-color: vars.$primary;
+  transition: width vars.$transition-duration vars.$transition-timing;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Error shake animation
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .upload-container {
+    min-height: $min-touch-target-size * 1.5;
+    padding: vars.$spacing-unit * 1.5;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .upload-container {
+    background-color: rgba(vars.$surface, 0.1);
+    border-color: rgba(vars.$primary, 0.6);
+  }
+
+  .upload-container--dragging {
+    background-color: rgba(vars.$primary, 0.25);
+  }
+}
