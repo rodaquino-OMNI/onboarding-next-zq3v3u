@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: austa-backend
+  namespace: austa
+  labels:
+    app: austa
+    component: backend
+    environment: production
+    version: "1.0.0"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+    checksum/config: "${CONFIG_CHECKSUM}"
+    checksum/secrets: "${SECRETS_CHECKSUM}"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: austa
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: austa
+        component: backend
+        version: "1.0.0"
+    spec:
+      # Pod disruption budget for high availability
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: austa
+                  component: backend
+              topologyKey: kubernetes.io/hostname
+
+      # Security context for pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
+      # Containers
+      containers:
+      - name: php-fpm
+        image: austa/backend:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000
+          name: fpm
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+        envFrom:
+        - configMapRef:
+            name: austa-app-config
+        - secretRef:
+            name: austa-app-secrets
+        livenessProbe:
+          exec:
+            command:
+            - php-fpm-healthcheck
+            - --accepted-conn=5000
+            - --listen-queue=10
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - php-fpm-healthcheck
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /var/www/html/storage/framework/cache
+        - name: sessions
+          mountPath: /var/www/html/storage/framework/sessions
+        - name: views
+          mountPath: /var/www/html/storage/framework/views
+        - name: logs
+          mountPath: /var/www/html/storage/logs
+
+      - name: nginx
+        image: austa/nginx:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+            httpHeaders:
+            - name: X-Health-Check
+              value: "true"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+        - name: tmp
+          mountPath: /tmp
+
+      # Volumes
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      - name: sessions
+        emptyDir: {}
+      - name: views
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      - name: nginx-config
+        configMap:
+          name: austa-nginx-config
+
+      # Pod termination grace period
+      terminationGracePeriodSeconds: 60
+
+      # Image pull secrets
+      imagePullSecrets:
+      - name: austa-registry-secret
