@@ -1,0 +1,27 @@
+Technical specifications for icon-152x152.png:
+- Dimensions: 152x152 pixels
+- Format: PNG with alpha channel
+- Color space: RGB + Alpha
+- Primary color: #2196F3
+- Background: #ffffff (with transparency)
+- Safe area: 40px padding, 72x72px core area
+- Purposes: maskable, any
+- Optimization: Optimized PNG compression
+- Cache headers: Cache-Control: public, max-age=31536000
+- Usage: PWA manifest icon, iOS/iPad touch icon
+- Design system: Material Design compliant
+- Accessibility: WCAG AA contrast compliant
+- Dark mode: Compatible
+- Alternative format: WebP version available
+
+Generation command:
+convert -size 152x152 xc:none \
+  -fill '#2196F3' \
+  -draw 'roundrectangle 40,40 112,112 20,20' \
+  -alpha set -background none \
+  -quality 95 \
+  -define png:compression-level=9 \
+  icon-152x152.png
+
+WebP alternative:
+cwebp -q 95 icon-152x152.png -o icon-152x152.webp
