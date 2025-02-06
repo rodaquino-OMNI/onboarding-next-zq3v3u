@@ -1,0 +1,127 @@
+@use '../../../../assets/scss/variables' as vars;
+@use '../../../../assets/scss/mixins' as mix;
+
+// Container for language selector with enhanced accessibility
+.language-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: map-get(vars.$spacing, scale, xs);
+  font-family: map-get(vars.$typography, font-family);
+  container-type: inline-size;
+
+  // RTL support
+  [dir='rtl'] & {
+    direction: rtl;
+  }
+}
+
+// Enhanced accessible button with interaction states
+.language-button {
+  display: flex;
+  align-items: center;
+  gap: map-get(vars.$spacing, scale, xs);
+  padding: map-get(vars.$spacing, scale, xs);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: map-get(vars.$colors, text, primary, light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+  
+  &:hover {
+    background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, hover));
+  }
+
+  // Dark theme support
+  .dark-theme & {
+    color: map-get(vars.$colors, text, primary, dark);
+  }
+
+  // High contrast mode
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+// Dropdown menu with enhanced positioning and animations
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: map-get(vars.$colors, surface, light);
+  border-radius: 4px;
+  z-index: map-get(vars.$spacing, scale, xl);
+  transform-origin: top;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  content-visibility: auto;
+
+  @include mix.elevation(2);
+
+  // RTL support
+  [dir='rtl'] & {
+    left: auto;
+    right: 0;
+  }
+
+  // Dark theme support
+  .dark-theme & {
+    background: map-get(vars.$colors, surface, dark);
+    @include mix.elevation(2, true);
+  }
+
+  // Show state
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  // Responsive styles
+  @include mix.container-query(map-get(vars.$breakpoints, xs)) {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+// Individual language option with enhanced interaction states
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: map-get(vars.$spacing, scale, xs);
+  padding: map-get(vars.$spacing, scale, sm);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, hover));
+  }
+
+  &[aria-selected="true"] {
+    background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, selected));
+    font-weight: map-get(vars.$typography, weights, medium);
+  }
+
+  // Focus state
+  @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+
+  // Dark theme support
+  .dark-theme & {
+    &:hover {
+      background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, hover));
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .language-selector {
+    display: none;
+  }
+}
