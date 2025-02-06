@@ -1,0 +1,175 @@
+// Import design system variables
+@use 'variables' as vars;
+
+// Font face declarations with performance optimization
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/roboto/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/roboto/Roboto-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/roboto/Roboto-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+// Fluid typography calculation function
+@function calculate-responsive-size($base-size, $scale-factor, $min-size, $max-size) {
+  $min: $base-size * $min-size;
+  $preferred: $base-size * $scale-factor;
+  $max: $base-size * $max-size;
+  
+  @return clamp(#{$min}, #{$preferred + (1vw)}, #{$max});
+}
+
+// Base typography styles with enhanced accessibility
+.typography-base {
+  font-family: #{map-get(vars.$typography, 'font-family')}, system-ui, -apple-system, sans-serif;
+  font-size: #{map-get(vars.$typography, 'base-size')};
+  line-height: 1.5;
+  font-weight: #{map-get(vars.$typography, 'weights', 'regular')};
+  text-size-adjust: 100%;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Enhanced heading styles with responsive scaling
+.headings {
+  h1 {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      2.5,
+      2,
+      3
+    );
+    font-weight: #{map-get(vars.$typography, 'weights', 'bold')};
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5em;
+    color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'light')});
+  }
+
+  h2 {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      2,
+      1.75,
+      2.5
+    );
+    font-weight: #{map-get(vars.$typography, 'weights', 'bold')};
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5em;
+    color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'light')});
+  }
+
+  h3 {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      1.75,
+      1.5,
+      2
+    );
+    font-weight: #{map-get(vars.$typography, 'weights', 'medium')};
+    line-height: 1.3;
+    margin-bottom: 0.5em;
+    color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'light')});
+  }
+
+  h4 {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      1.5,
+      1.25,
+      1.75
+    );
+    font-weight: #{map-get(vars.$typography, 'weights', 'medium')};
+    line-height: 1.35;
+    margin-bottom: 0.5em;
+    color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'light')});
+  }
+}
+
+// Body text variants with enhanced readability
+.body-text {
+  &-large {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      1.125,
+      1,
+      1.25
+    );
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'light')});
+  }
+
+  &-small {
+    font-size: calculate-responsive-size(
+      map-get(vars.$typography, 'base-size'),
+      0.875,
+      0.75,
+      1
+    );
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary, #{map-get(vars.$colors, 'text', 'secondary', 'light')});
+  }
+}
+
+// Dark mode color adjustments
+@media (prefers-color-scheme: dark) {
+  .headings {
+    h1, h2, h3, h4 {
+      color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'dark')});
+    }
+  }
+
+  .body-text {
+    &-large {
+      color: var(--text-primary, #{map-get(vars.$colors, 'text', 'primary', 'dark')});
+    }
+
+    &-small {
+      color: var(--text-secondary, #{map-get(vars.$colors, 'text', 'secondary', 'dark')});
+    }
+  }
+}
+
+// High contrast mode adjustments for accessibility
+@media (prefers-contrast: high) {
+  .headings {
+    h1, h2, h3, h4 {
+      color: var(--text-high-contrast, #000000);
+    }
+  }
+
+  .body-text {
+    &-large, &-small {
+      color: var(--text-high-contrast, #000000);
+    }
+  }
+}
+
+// Reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
