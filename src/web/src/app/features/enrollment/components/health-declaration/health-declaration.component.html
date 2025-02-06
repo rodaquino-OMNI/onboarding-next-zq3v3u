@@ -1,0 +1,167 @@
+<form [formGroup]="healthForm" (ngSubmit)="onSubmit()" role="form" 
+      aria-label="{{ 'HEALTH_DECLARATION.FORM_LABEL' | translate }}" 
+      class="health-declaration-form">
+  
+  <!-- Progress Indicator -->
+  <mat-progress-bar [value]="formProgress" 
+                    aria-label="{{ 'HEALTH_DECLARATION.PROGRESS' | translate }}"
+                    class="form-progress">
+  </mat-progress-bar>
+
+  <!-- Personal Information Section -->
+  <section class="form-section" aria-labelledby="personal-info-title">
+    <h2 id="personal-info-title" class="section-title">
+      {{ 'HEALTH_DECLARATION.PERSONAL_INFO' | translate }}
+    </h2>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'HEALTH_DECLARATION.NAME' | translate }}</mat-label>
+      <input matInput
+             formControlName="name"
+             type="text"
+             required
+             [attr.aria-required]="true"
+             [attr.aria-invalid]="healthForm.get('name').invalid && healthForm.get('name').touched"
+             data-encryption="true">
+      <mat-error *ngIf="healthForm.get('name').invalid && healthForm.get('name').touched">
+        {{ 'HEALTH_DECLARATION.ERRORS.NAME_REQUIRED' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'HEALTH_DECLARATION.DOB' | translate }}</mat-label>
+      <input matInput
+             formControlName="dateOfBirth"
+             [matDatepicker]="dobPicker"
+             required
+             [attr.aria-required]="true"
+             [attr.aria-invalid]="healthForm.get('dateOfBirth').invalid && healthForm.get('dateOfBirth').touched"
+             data-encryption="true">
+      <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+      <mat-datepicker #dobPicker></mat-datepicker>
+      <mat-error *ngIf="healthForm.get('dateOfBirth').invalid && healthForm.get('dateOfBirth').touched">
+        {{ 'HEALTH_DECLARATION.ERRORS.DOB_REQUIRED' | translate }}
+      </mat-error>
+    </mat-form-field>
+  </section>
+
+  <!-- Medical History Section -->
+  <section class="form-section" aria-labelledby="medical-history-title">
+    <h2 id="medical-history-title" class="section-title">
+      {{ 'HEALTH_DECLARATION.MEDICAL_HISTORY' | translate }}
+    </h2>
+
+    <div formGroupName="conditions" class="conditions-group" role="group" 
+         aria-label="{{ 'HEALTH_DECLARATION.CONDITIONS' | translate }}">
+      <mat-checkbox formControlName="diabetes" data-encryption="true">
+        {{ 'HEALTH_DECLARATION.CONDITIONS.DIABETES' | translate }}
+      </mat-checkbox>
+
+      <mat-checkbox formControlName="hypertension" data-encryption="true">
+        {{ 'HEALTH_DECLARATION.CONDITIONS.HYPERTENSION' | translate }}
+      </mat-checkbox>
+
+      <mat-checkbox formControlName="heartDisease" data-encryption="true">
+        {{ 'HEALTH_DECLARATION.CONDITIONS.HEART_DISEASE' | translate }}
+      </mat-checkbox>
+
+      <mat-form-field *ngIf="healthForm.get('conditions.other').value" appearance="outline" class="full-width">
+        <mat-label>{{ 'HEALTH_DECLARATION.CONDITIONS.OTHER_SPECIFY' | translate }}</mat-label>
+        <input matInput
+               formControlName="otherCondition"
+               type="text"
+               [attr.aria-invalid]="healthForm.get('conditions.otherCondition').invalid && healthForm.get('conditions.otherCondition').touched"
+               data-encryption="true">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <!-- Medications Section -->
+  <section class="form-section medications-array" aria-labelledby="medications-title">
+    <h2 id="medications-title" class="section-title">
+      {{ 'HEALTH_DECLARATION.MEDICATIONS' | translate }}
+    </h2>
+
+    <div formArrayName="medications">
+      <div *ngFor="let medication of medications.controls; let i=index" 
+           [formGroupName]="i" class="medication-item">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'HEALTH_DECLARATION.MEDICATIONS.NAME' | translate }}</mat-label>
+          <input matInput
+                 formControlName="name"
+                 type="text"
+                 required
+                 [attr.aria-required]="true"
+                 [attr.aria-invalid]="medication.get('name').invalid && medication.get('name').touched"
+                 data-encryption="true">
+          <mat-error *ngIf="medication.get('name').invalid && medication.get('name').touched">
+            {{ 'HEALTH_DECLARATION.ERRORS.MEDICATION_NAME_REQUIRED' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'HEALTH_DECLARATION.MEDICATIONS.DOSAGE' | translate }}</mat-label>
+          <input matInput
+                 formControlName="dosage"
+                 type="text"
+                 required
+                 [attr.aria-required]="true"
+                 [attr.aria-invalid]="medication.get('dosage').invalid && medication.get('dosage').touched"
+                 data-encryption="true">
+          <mat-error *ngIf="medication.get('dosage').invalid && medication.get('dosage').touched">
+            {{ 'HEALTH_DECLARATION.ERRORS.MEDICATION_DOSAGE_REQUIRED' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'HEALTH_DECLARATION.MEDICATIONS.FREQUENCY' | translate }}</mat-label>
+          <input matInput
+                 formControlName="frequency"
+                 type="text"
+                 required
+                 [attr.aria-required]="true"
+                 [attr.aria-invalid]="medication.get('frequency').invalid && medication.get('frequency').touched"
+                 data-encryption="true">
+          <mat-error *ngIf="medication.get('frequency').invalid && medication.get('frequency').touched">
+            {{ 'HEALTH_DECLARATION.ERRORS.MEDICATION_FREQUENCY_REQUIRED' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-icon-button type="button" 
+                (click)="removeMedication(i)"
+                aria-label="{{ 'HEALTH_DECLARATION.MEDICATIONS.REMOVE' | translate }}">
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <button mat-stroked-button type="button" 
+            (click)="addMedication()"
+            aria-label="{{ 'HEALTH_DECLARATION.MEDICATIONS.ADD' | translate }}">
+      <mat-icon>add</mat-icon>
+      {{ 'HEALTH_DECLARATION.MEDICATIONS.ADD' | translate }}
+    </button>
+  </section>
+
+  <!-- Session Timeout Warning -->
+  <div *ngIf="showTimeoutWarning" role="alert" class="timeout-warning">
+    {{ 'HEALTH_DECLARATION.TIMEOUT_WARNING' | translate }}
+  </div>
+
+  <!-- Form Actions -->
+  <div class="form-actions">
+    <button mat-button type="button"
+            (click)="saveProgress()"
+            [disabled]="submitting"
+            aria-label="{{ 'HEALTH_DECLARATION.SAVE' | translate }}">
+      {{ 'HEALTH_DECLARATION.SAVE' | translate }}
+    </button>
+
+    <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="!healthForm.valid || submitting"
+            aria-label="{{ 'HEALTH_DECLARATION.SUBMIT' | translate }}">
+      {{ 'HEALTH_DECLARATION.SUBMIT' | translate }}
+    </button>
+  </div>
+</form>
