@@ -1,0 +1,218 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/backend/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/backend/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+env:
+  PHP_VERSION: '8.1'
+  COMPOSER_CACHE: '~/.composer/cache'
+  APP_ENV: 'testing'
+  MIN_COVERAGE: '80'
+  MAX_SECURITY_ISSUES: '0'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, libxml, openssl
+          coverage: xdebug
+          tools: composer:v2, php-cs-fixer, phpunit
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          cd src/backend
+          composer install --prefer-dist --no-interaction --no-progress
+
+  lint:
+    name: Code Style & Static Analysis
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: php-cs-fixer, phpstan
+
+      - name: PHP CS Fixer
+        run: |
+          cd src/backend
+          php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+
+      - name: PHPStan
+        run: |
+          cd src/backend
+          composer require --dev phpstan/phpstan
+          vendor/bin/phpstan analyse app tests --level=5
+
+  security:
+    name: Security Scan
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: OWASP Dependency Check
+        uses: OWASP/dependency-check-action@v2
+        with:
+          path: 'src/backend'
+          format: 'HTML'
+          failOnCVSS: 7
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: reports
+
+      - name: CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          languages: php
+          queries: security-and-quality
+
+  test:
+    name: Unit & Integration Tests
+    needs: [lint, security]
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: xdebug
+
+      - name: Prepare Test Environment
+        run: |
+          cd src/backend
+          cp .env.example .env.testing
+          php artisan key:generate
+          php artisan config:clear
+          php artisan route:clear
+
+      - name: Run Tests
+        run: |
+          cd src/backend
+          vendor/bin/phpunit --configuration phpunit.xml --coverage-clover coverage.xml
+
+      - name: Check Coverage
+        run: |
+          cd src/backend
+          COVERAGE=$(php -r "echo round(json_decode(file_get_contents('coverage.json'))->metrics->elements->coverage, 2);")
+          if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
+            echo "Code coverage is below minimum required: $COVERAGE% < $MIN_COVERAGE%"
+            exit 1
+          fi
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: src/backend/coverage.xml
+
+  compliance:
+    name: HIPAA Compliance Check
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Verify PHI Protection
+        run: |
+          cd src/backend
+          php artisan test --group=hipaa-compliance
+
+      - name: Audit Log Check
+        run: |
+          cd src/backend
+          php artisan audit:verify
+
+      - name: Encryption Validation
+        run: |
+          cd src/backend
+          php artisan security:check-encryption
+
+      - name: Generate Compliance Report
+        run: |
+          cd src/backend
+          php artisan compliance:report --format=html
+          
+      - name: Upload Compliance Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: compliance-report
+          path: src/backend/storage/reports/compliance
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: [test, compliance]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build and Push Docker Image
+        run: |
+          cd src/backend
+          docker build -t ${{ secrets.ECR_REGISTRY }}/backend:${{ github.sha }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/backend:${{ github.sha }}
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster staging --service backend --force-new-deployment
+
+      - name: Health Check
+        run: |
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${{ secrets.STAGING_URL }}/health)" != "200" ]]; do sleep 5; done'
