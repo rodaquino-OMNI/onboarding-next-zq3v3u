@@ -1,0 +1,248 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "next": "Próximo",
+      "back": "Voltar",
+      "submit": "Enviar",
+      "confirm": "Confirmar",
+      "close": "Fechar",
+      "upload": "Enviar arquivo",
+      "search": "Pesquisar",
+      "filter": "Filtrar",
+      "clear": "Limpar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "view": "Visualizar"
+    },
+    "labels": {
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "address": "Endereço",
+      "city": "Cidade",
+      "state": "Estado",
+      "zipCode": "CEP",
+      "cpf": "CPF",
+      "birthDate": "Data de nascimento",
+      "gender": "Gênero",
+      "status": "Status",
+      "createdAt": "Criado em",
+      "updatedAt": "Atualizado em"
+    },
+    "messages": {
+      "loading": "Carregando...",
+      "success": "Operação realizada com sucesso",
+      "error": "Ocorreu um erro ao processar sua solicitação",
+      "required": "Campo obrigatório",
+      "invalidFormat": "Formato inválido",
+      "noResults": "Nenhum resultado encontrado",
+      "confirmAction": "Tem certeza que deseja continuar?"
+    },
+    "navigation": {
+      "home": "Início",
+      "enrollment": "Inscrição",
+      "documents": "Documentos",
+      "interview": "Entrevista",
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "help": "Ajuda",
+      "logout": "Sair"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "email": "E-mail",
+      "password": "Senha",
+      "forgotPassword": "Esqueceu sua senha?",
+      "rememberMe": "Lembrar-me",
+      "submit": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastre-se"
+    },
+    "register": {
+      "title": "Criar conta",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirmar senha",
+      "terms": "Li e aceito os termos de uso",
+      "privacy": "Li e aceito a política de privacidade",
+      "submit": "Cadastrar"
+    },
+    "privacy": {
+      "title": "Aviso de Privacidade",
+      "description": "Seus dados pessoais serão tratados de acordo com a LGPD",
+      "dataUsage": "Utilizamos seus dados para processar sua inscrição no plano de saúde",
+      "dataProtection": "Seus dados são protegidos por criptografia e medidas de segurança"
+    }
+  },
+  "enrollment": {
+    "steps": {
+      "personal": "Dados pessoais",
+      "address": "Endereço",
+      "health": "Declaração de saúde",
+      "documents": "Documentos",
+      "interview": "Entrevista médica",
+      "review": "Revisão",
+      "complete": "Conclusão"
+    },
+    "forms": {
+      "personalInfo": {
+        "title": "Informações pessoais",
+        "name": "Nome completo",
+        "cpf": "CPF",
+        "rg": "RG",
+        "birthDate": "Data de nascimento",
+        "gender": "Gênero",
+        "maritalStatus": "Estado civil"
+      },
+      "address": {
+        "title": "Endereço",
+        "street": "Rua",
+        "number": "Número",
+        "complement": "Complemento",
+        "neighborhood": "Bairro",
+        "city": "Cidade",
+        "state": "Estado",
+        "zipCode": "CEP"
+      }
+    }
+  },
+  "documents": {
+    "upload": {
+      "title": "Envio de documentos",
+      "dragDrop": "Arraste e solte arquivos aqui ou",
+      "browse": "procure em seu computador",
+      "maxSize": "Tamanho máximo: 10MB",
+      "allowedTypes": "Formatos permitidos: PDF, JPG, PNG"
+    },
+    "types": {
+      "id": "Documento de identidade",
+      "cpf": "CPF",
+      "address": "Comprovante de residência",
+      "income": "Comprovante de renda",
+      "health": "Declaração de saúde"
+    },
+    "validation": {
+      "required": "Documento obrigatório",
+      "processing": "Processando documento...",
+      "success": "Documento validado com sucesso",
+      "error": "Erro ao processar documento"
+    }
+  },
+  "interview": {
+    "scheduling": {
+      "title": "Agendamento de entrevista",
+      "selectDate": "Selecione uma data",
+      "selectTime": "Selecione um horário",
+      "interviewer": "Entrevistador",
+      "duration": "Duração estimada: 30 minutos"
+    },
+    "room": {
+      "connecting": "Conectando...",
+      "waiting": "Aguardando entrevistador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "controls": {
+        "camera": "Câmera",
+        "microphone": "Microfone",
+        "share": "Compartilhar tela",
+        "chat": "Chat",
+        "end": "Encerrar"
+      }
+    }
+  },
+  "health": {
+    "declaration": {
+      "title": "Declaração de saúde",
+      "instructions": "Responda todas as perguntas com sinceridade",
+      "confidentiality": "Suas informações são confidenciais e protegidas"
+    },
+    "conditions": {
+      "diabetes": "Diabetes",
+      "hypertension": "Hipertensão",
+      "heartDisease": "Doença cardíaca",
+      "cancer": "Câncer",
+      "respiratory": "Doença respiratória",
+      "other": "Outras condições"
+    }
+  },
+  "privacy": {
+    "notices": {
+      "lgpd": {
+        "title": "Aviso de Privacidade LGPD",
+        "purpose": "Finalidade do tratamento de dados",
+        "rights": "Seus direitos como titular",
+        "security": "Medidas de segurança",
+        "contact": "Contato do DPO"
+      },
+      "consent": {
+        "title": "Termo de Consentimento",
+        "dataUsage": "Uso dos dados pessoais",
+        "dataSecurity": "Segurança dos dados",
+        "dataRights": "Direitos do titular",
+        "withdrawal": "Revogação do consentimento"
+      }
+    }
+  },
+  "accessibility": {
+    "aria": {
+      "main": "Conteúdo principal",
+      "navigation": "Menu de navegação",
+      "search": "Campo de busca",
+      "menu": "Menu",
+      "close": "Fechar",
+      "expand": "Expandir",
+      "collapse": "Recolher"
+    },
+    "screenReader": {
+      "loading": "Carregando conteúdo, por favor aguarde",
+      "required": "Este campo é obrigatório",
+      "error": "Erro: ",
+      "success": "Sucesso: ",
+      "navigation": "Você está na página "
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Painel administrativo",
+      "stats": "Estatísticas",
+      "users": "Usuários",
+      "enrollments": "Inscrições",
+      "interviews": "Entrevistas"
+    },
+    "management": {
+      "users": "Gestão de usuários",
+      "roles": "Gestão de perfis",
+      "settings": "Configurações do sistema",
+      "logs": "Logs do sistema"
+    }
+  },
+  "errors": {
+    "validation": {
+      "required": "Campo obrigatório",
+      "email": "E-mail inválido",
+      "cpf": "CPF inválido",
+      "phone": "Telefone inválido",
+      "password": "Senha deve conter pelo menos 8 caracteres",
+      "passwordMatch": "Senhas não conferem"
+    },
+    "system": {
+      "generic": "Ocorreu um erro inesperado",
+      "network": "Erro de conexão",
+      "timeout": "Tempo limite excedido",
+      "unauthorized": "Acesso não autorizado",
+      "forbidden": "Acesso negado",
+      "notFound": "Recurso não encontrado"
+    },
+    "accessibility": {
+      "imageAlt": "Imagem sem descrição",
+      "linkAria": "Link sem descrição",
+      "formLabel": "Campo sem rótulo",
+      "contrast": "Contraste insuficiente"
+    }
+  }
+}
