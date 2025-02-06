@@ -1,0 +1,92 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js",
+          "/assets/icons/icon-*.png"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/assets/i18n/*.json",
+          "/assets/icons/*.png",
+          "/assets/images/*",
+          "/assets/fonts/**",
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    },
+    {
+      "name": "fonts",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/fonts/*.{woff,woff2,ttf,otf}",
+          "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-freshness",
+      "urls": [
+        "/api/v1/enrollments",
+        "/api/v1/documents",
+        "/api/v1/health-records",
+        "/api/v1/interviews"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 100,
+        "maxAge": "3d",
+        "timeout": "10s",
+        "timeoutMs": 10000,
+        "refreshAheadMs": 30000,
+        "refreshOnError": true
+      }
+    },
+    {
+      "name": "api-performance",
+      "urls": [
+        "/api/v1/users/profile",
+        "/api/v1/config",
+        "/api/v1/static/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "1d",
+        "timeoutMs": 5000,
+        "refreshAheadMs": 60000
+      }
+    }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/api/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**",
+    "!/assets/i18n/*",
+    "!/health",
+    "!/metrics"
+  ]
+}
