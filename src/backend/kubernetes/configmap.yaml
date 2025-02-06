@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: austa-app-config
+  namespace: austa
+  labels:
+    app: austa
+    component: backend
+    environment: production
+    region: sa-east-1
+    compliance: hipaa-gdpr-lgpd
+data:
+  # Core Application Settings
+  APP_NAME: "AUSTA Integration Platform"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "https://api.austa.com"
+  APP_TIMEZONE: "America/Sao_Paulo"
+  APP_LOCALE: "pt-BR"
+  APP_FALLBACK_LOCALE: "en"
+  APP_REGION: "sa-east-1"
+  APP_DR_REGION: "southamerica-east1"
+
+  # Security & Session Configuration
+  SESSION_DRIVER: "redis"
+  SESSION_LIFETIME: "60"
+  SESSION_SECURE: "true"
+  SESSION_DOMAIN: ".austa.com"
+  SESSION_SAME_SITE: "strict"
+  SANCTUM_STATEFUL_DOMAINS: "api.austa.com,admin.austa.com"
+  SANCTUM_EXPIRATION: "60"
+  SANCTUM_TOKEN_PREFIX: "austa_token"
+
+  # Queue & Cache Configuration
+  QUEUE_CONNECTION: "redis"
+  QUEUE_RETRY_AFTER: "90"
+  QUEUE_TIMEOUT: "60"
+  CACHE_DRIVER: "redis"
+  CACHE_PREFIX: "austa_cache"
+  CACHE_TTL: "3600"
+
+  # Logging Configuration
+  LOG_CHANNEL: "stack"
+  LOG_LEVEL: "info"
+  LOG_MAX_FILES: "30"
+  LOG_COMPLIANCE_LEVEL: "hipaa"
+
+  # Database Configuration
+  DB_CONNECTION: "mysql"
+  DB_HOST: "austa-rds.cluster-xyz.sa-east-1.rds.amazonaws.com"
+  DB_PORT: "3306"
+  DB_DATABASE: "austa"
+  DB_DR_HOST: "austa-sql.southamerica-east1.cloudsql"
+
+  # Redis Configuration
+  REDIS_HOST: "austa-redis.xyz.ng.0001.sae1.cache.amazonaws.com"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  REDIS_CACHE_DB: "1"
+  REDIS_DR_HOST: "austa-redis.southamerica-east1.cache.cloud"
+
+  # Mail Configuration
+  MAIL_MAILER: "ses"
+  MAIL_FROM_ADDRESS: "noreply@austa.com"
+  MAIL_FROM_NAME: "AUSTA Integration Platform"
+  MAIL_ENCRYPTION: "tls"
+
+  # AWS Service Configuration
+  AWS_DEFAULT_REGION: "sa-east-1"
+  AWS_SES_REGION: "sa-east-1"
+  AWS_TEXTRACT_REGION: "sa-east-1"
+
+  # Vonage Video Configuration
+  VONAGE_REGION: "americas"
+  VONAGE_API_VERSION: "v2"
+
+  # FHIR Integration Configuration
+  FHIR_BASE_URL: "https://fhir.austa.com/api"
+  FHIR_VERSION: "R4"
+  FHIR_TIMEOUT: "30"
+
+  # Compliance Configuration
+  COMPLIANCE_MODE: "strict"
+  GDPR_ENABLED: "true"
+  LGPD_ENABLED: "true"
+  PHI_ENCRYPTION: "true"
+
+  # Monitoring Configuration
+  MONITORING_ENABLED: "true"
+  TRACE_ENABLED: "true"
+  METRICS_ENABLED: "true"
