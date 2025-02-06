@@ -1,0 +1,53 @@
+<div class="alert-container" 
+     role="alert" 
+     aria-live="polite"
+     [dir]="dir">
+
+  <div *ngFor="let alert of activeAlerts; trackBy: trackByFn"
+       [class]="['alert', 'alert--' + alert.type]"
+       [class.alert--rtl]="dir === 'rtl'"
+       [@alertAnimation]="alert.state"
+       [attr.aria-labelledby]="'alert-' + alert.id + '-title'"
+       [attr.aria-describedby]="'alert-' + alert.id + '-message'"
+       [attr.data-testid]="'alert-' + alert.id"
+       tabindex="0">
+
+    <!-- Alert Icon -->
+    <mat-icon class="alert__icon" [attr.aria-hidden]="true">
+      <ng-container [ngSwitch]="alert.type">
+        <ng-container *ngSwitchCase="'success'">check_circle</ng-container>
+        <ng-container *ngSwitchCase="'error'">error</ng-container>
+        <ng-container *ngSwitchCase="'warning'">warning</ng-container>
+        <ng-container *ngSwitchCase="'info'">info</ng-container>
+      </ng-container>
+    </mat-icon>
+
+    <!-- Alert Content -->
+    <div class="alert__content">
+      <div [id]="'alert-' + alert.id + '-title'" 
+           class="alert__title"
+           [attr.lang]="alert.language">
+        {{ alert.title }}
+      </div>
+      
+      <div [id]="'alert-' + alert.id + '-message'"
+           class="alert__message"
+           [attr.lang]="alert.language">
+        {{ alert.message }}
+      </div>
+    </div>
+
+    <!-- Close Button -->
+    <button class="alert__close"
+            type="button"
+            (click)="dismissAlert(alert.id)"
+            (keydown.enter)="dismissAlert(alert.id)"
+            (keydown.space)="dismissAlert(alert.id)"
+            [attr.aria-label]="'Dismiss ' + alert.title + ' alert'">
+      <mat-icon>close</mat-icon>
+      <span class="screen-reader-only">Close alert</span>
+    </button>
+
+  </div>
+
+</div>
