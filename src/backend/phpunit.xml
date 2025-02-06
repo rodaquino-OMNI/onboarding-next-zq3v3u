@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="true"
+         stopOnFailure="false"
+         verbose="true">
+
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Security">
+            <directory suffix="Test.php">./tests/Security</directory>
+        </testsuite>
+
+        <testsuite name="Integration">
+            <directory suffix="Test.php">./tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+
+        <exclude>
+            <directory>./app/Console/Kernel.php</directory>
+            <directory>./app/Exceptions/Handler.php</directory>
+            <directory>./app/Providers</directory>
+            <directory>./app/Bootstrap</directory>
+            <directory>./app/Config</directory>
+        </exclude>
+
+        <report>
+            <html outputDirectory="tests/coverage"/>
+            <clover outputFile="tests/coverage/clover.xml"/>
+            <text outputFile="tests/coverage/coverage.txt"/>
+            <json outputFile="tests/coverage/coverage.json"/>
+        </report>
+    </coverage>
+
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="BROADCAST_DRIVER" value="null"/>
+        <env name="SANCTUM_STATEFUL_DOMAINS" value="localhost"/>
+        <env name="SESSION_SECURE_COOKIE" value="true"/>
+        <env name="SESSION_COOKIE_HTTPONLY" value="true"/>
+        <env name="SESSION_COOKIE_SAMESITE" value="strict"/>
+        <env name="SECURITY_HEADERS_ENABLED" value="true"/>
+        <env name="AUDIT_TESTS_ENABLED" value="true"/>
+        <ini name="memory_limit" value="512M"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="max_execution_time" value="300"/>
+        <ini name="date.timezone" value="UTC"/>
+    </php>
+
+    <logging>
+        <testdoxText outputFile="tests/logs/test.log"/>
+        <junit outputFile="tests/logs/junit.xml"/>
+        <testdoxHtml outputFile="tests/logs/testdox.html"/>
+    </logging>
+
+    <listeners>
+        <listener class="Tests\Listeners\AuditTestListener"/>
+        <listener class="Tests\Listeners\SecurityTestListener"/>
+    </listeners>
+
+    <extensions>
+        <extension class="Tests\Extensions\HIPAAComplianceExtension"/>
+        <extension class="Tests\Extensions\TestEncryptionExtension"/>
+    </extensions>
+
+    <groups>
+        <exclude>
+            <group>slow</group>
+            <group>network</group>
+        </exclude>
+    </groups>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">app/</directory>
+            <exclude>
+                <directory suffix=".php">app/Console</directory>
+                <directory suffix=".php">app/Exceptions</directory>
+                <directory suffix=".php">app/Providers</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
