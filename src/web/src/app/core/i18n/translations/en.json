@@ -1,0 +1,201 @@
+{
+  "common": {
+    "accessibility": {
+      "skip_to_content": "Skip to main content",
+      "screen_reader_menu": "Press Enter to open menu",
+      "loading": "Content is loading",
+      "error": "An error has occurred",
+      "required_field": "This field is required"
+    },
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "back": "Back",
+      "upload": "Upload",
+      "delete": "Delete",
+      "edit": "Edit",
+      "submit": "Submit",
+      "close": "Close",
+      "confirm": "Confirm",
+      "retry": "Try Again"
+    },
+    "labels": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "address": "Address",
+      "status": "Status",
+      "date": "Date",
+      "time": "Time",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "messages": {
+      "success": "Operation completed successfully",
+      "error": "An error occurred. Please try again",
+      "loading": "Loading...",
+      "required": "This field is required",
+      "invalid": "Invalid input",
+      "confirmation": "Are you sure you want to proceed?",
+      "session_timeout": "Your session has expired. Please log in again"
+    },
+    "navigation": {
+      "home": "Home",
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Sign Out",
+      "help": "Help & Support",
+      "notifications": "Notifications"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In to AUSTA",
+      "email_label": "Email Address",
+      "password_label": "Password",
+      "submit_button": "Sign In",
+      "forgot_password": "Forgot Password?",
+      "register_prompt": "Don't have an account? Register now",
+      "remember_me": "Keep me signed in",
+      "mfa_prompt": "Enter verification code"
+    },
+    "register": {
+      "title": "Create Your AUSTA Account",
+      "name_label": "Full Name (as it appears on ID)",
+      "email_label": "Email Address",
+      "password_label": "Password",
+      "confirm_password": "Confirm Password",
+      "submit_button": "Create Account",
+      "login_prompt": "Already have an account? Sign in",
+      "terms_consent": "I agree to the Terms of Service and Privacy Policy",
+      "healthcare_consent": "I consent to the processing of my healthcare information"
+    }
+  },
+  "enrollment": {
+    "title": "Healthcare Plan Enrollment",
+    "steps": {
+      "personal": "Personal Information",
+      "documents": "Document Upload",
+      "health": "Health Declaration",
+      "interview": "Medical Interview",
+      "review": "Review & Submit"
+    },
+    "form": {
+      "personal_info": {
+        "title": "Personal Information",
+        "name_label": "Full Legal Name",
+        "dob_label": "Date of Birth",
+        "gender_label": "Gender",
+        "address_label": "Residential Address",
+        "emergency_contact": "Emergency Contact",
+        "insurance_info": "Current Insurance Information"
+      }
+    },
+    "progress": {
+      "saved": "Progress saved",
+      "complete": "Section complete",
+      "incomplete": "Section incomplete",
+      "validation_error": "Please correct the errors before continuing"
+    }
+  },
+  "documents": {
+    "upload": {
+      "title": "Required Document Upload",
+      "instructions": "Please upload clear, readable copies of the following documents",
+      "id_document": "Government-issued ID Document",
+      "proof_address": "Proof of Address (utility bill, lease)",
+      "health_declaration": "Health Declaration Form",
+      "accessibility_note": "Documents should be in PDF, JPG, or PNG format"
+    },
+    "validation": {
+      "processing": "Processing document. Please wait...",
+      "success": "Document validated successfully",
+      "error": "Document validation failed. Please try again",
+      "size_limit": "Maximum file size: 10MB",
+      "format_error": "Invalid file format",
+      "quality_error": "Document image quality too low"
+    }
+  },
+  "interview": {
+    "scheduling": {
+      "title": "Schedule Your Medical Interview",
+      "select_date": "Select Preferred Date",
+      "select_time": "Select Available Time Slot",
+      "interviewer": "Available Medical Professional",
+      "timezone_note": "All times shown in your local timezone",
+      "reschedule": "Reschedule Appointment",
+      "confirmation": "Interview Confirmation"
+    },
+    "room": {
+      "title": "Medical Interview Session",
+      "connecting": "Establishing secure connection...",
+      "controls": {
+        "camera": "Toggle Camera",
+        "microphone": "Toggle Microphone",
+        "end_call": "End Interview",
+        "share_screen": "Share Screen",
+        "chat": "Open Chat"
+      },
+      "technical_issues": "Having technical issues?",
+      "quality_warning": "Poor connection detected"
+    }
+  },
+  "health": {
+    "declaration": {
+      "title": "Health Declaration Form",
+      "medical_history": "Medical History",
+      "current_medications": "Current Medications",
+      "allergies": "Allergies and Reactions",
+      "conditions": "Pre-existing Conditions",
+      "family_history": "Family Medical History",
+      "lifestyle": "Lifestyle Information",
+      "consent": "Medical Information Consent"
+    },
+    "privacy_notice": {
+      "title": "Health Information Privacy Notice",
+      "processing": "How we process your health information",
+      "sharing": "Information sharing policies",
+      "rights": "Your privacy rights",
+      "consent": "Consent to process health data"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Administrative Dashboard",
+      "enrollments": "Active Enrollments",
+      "interviews": "Scheduled Interviews",
+      "documents": "Pending Documents",
+      "users": "User Management",
+      "metrics": "System Metrics",
+      "audit_logs": "Audit Logs"
+    },
+    "management": {
+      "users": "User Management",
+      "roles": "Role Management",
+      "settings": "System Settings",
+      "integrations": "Integration Settings",
+      "audit": "Audit Trail",
+      "reports": "Reports Generation"
+    }
+  },
+  "errors": {
+    "http": {
+      "400": "Bad Request - Please check your input",
+      "401": "Unauthorized - Please sign in",
+      "403": "Forbidden - You don't have permission",
+      "404": "Not Found - Resource doesn't exist",
+      "500": "Internal Server Error - Please try again later",
+      "503": "Service Unavailable - System maintenance"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "password": "Password must be at least 8 characters with numbers and letters",
+      "match": "Passwords do not match",
+      "date": "Please enter a valid date",
+      "phone": "Please enter a valid phone number",
+      "file": "File upload failed"
+    }
+  }
+}
