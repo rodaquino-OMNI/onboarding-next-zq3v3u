@@ -1,0 +1,129 @@
+<!-- Skip link for keyboard navigation -->
+<a href="#main-content" 
+   class="skip-to-main" 
+   tabindex="0" 
+   aria-label="Skip to main content">
+  {{ 'accessibility.screen_reader.navigation.skip_link' | translate }}
+</a>
+
+<!-- Main header -->
+<header class="header mat-elevation-z4" 
+        role="banner" 
+        aria-label="Global header navigation">
+  
+  <!-- Logo section -->
+  <div class="header__logo">
+    <img src="assets/images/logo.svg" 
+         alt="AUSTA Integration Platform" 
+         class="logo-light"
+         [class.hidden]="isDarkTheme">
+    <img src="assets/images/logo-dark.svg" 
+         alt="AUSTA Integration Platform" 
+         class="logo-dark"
+         [class.hidden]="!isDarkTheme">
+  </div>
+
+  <!-- Main navigation -->
+  <nav class="header__nav" 
+       role="navigation" 
+       aria-label="Main navigation">
+    <button mat-button 
+            class="nav-item" 
+            routerLink="/dashboard" 
+            routerLinkActive="active"
+            aria-label="{{ 'common.navigation.home' | translate }}">
+      <mat-icon>dashboard</mat-icon>
+      <span>{{ 'common.navigation.home' | translate }}</span>
+    </button>
+  </nav>
+
+  <!-- Action buttons -->
+  <div class="header__actions">
+    <!-- Language selector -->
+    <app-language-selector
+      class="action-item"
+      [attr.aria-label]="'accessibility.screen_reader.navigation.language_selector' | translate"
+      (onLanguageChange)="handleLanguageChange($event)">
+    </app-language-selector>
+
+    <!-- Theme toggle -->
+    <button mat-icon-button 
+            class="action-item theme-toggle" 
+            (click)="toggleTheme()"
+            [attr.aria-label]="(isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme') | translate"
+            aria-pressed="{{isDarkTheme}}">
+      <mat-icon>{{isDarkTheme ? 'light_mode' : 'dark_mode'}}</mat-icon>
+    </button>
+
+    <!-- Notifications -->
+    <button mat-icon-button 
+            class="action-item" 
+            [matMenuTriggerFor]="notificationsMenu"
+            aria-label="{{ 'common.navigation.notifications' | translate }}"
+            [matBadge]="notificationCount"
+            [matBadgeHidden]="notificationCount === 0"
+            matBadgeColor="warn"
+            matBadgeSize="small">
+      <mat-icon>notifications</mat-icon>
+    </button>
+
+    <!-- User profile menu -->
+    <button mat-icon-button 
+            class="action-item" 
+            [matMenuTriggerFor]="userMenu"
+            [attr.aria-label]="'accessibility.screen_reader.navigation.user_menu' | translate">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </div>
+</header>
+
+<!-- Notifications menu -->
+<mat-menu #notificationsMenu="matMenu" 
+          class="notifications-menu" 
+          xPosition="before"
+          role="menu"
+          aria-label="{{ 'common.navigation.notifications' | translate }}">
+  <div class="menu-header">
+    <h3>{{ 'common.navigation.notifications' | translate }}</h3>
+  </div>
+  <div class="menu-content" *ngIf="notifications?.length; else noNotifications">
+    <button mat-menu-item 
+            *ngFor="let notification of notifications"
+            role="menuitem">
+      <mat-icon>{{notification.icon}}</mat-icon>
+      <span>{{notification.message}}</span>
+    </button>
+  </div>
+  <ng-template #noNotifications>
+    <div class="no-notifications">
+      <p>{{ 'common.messages.no_notifications' | translate }}</p>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<!-- User menu -->
+<mat-menu #userMenu="matMenu" 
+          class="user-menu" 
+          xPosition="before"
+          role="menu"
+          aria-label="{{ 'accessibility.screen_reader.navigation.user_menu' | translate }}">
+  <button mat-menu-item 
+          routerLink="/profile"
+          role="menuitem">
+    <mat-icon>person</mat-icon>
+    <span>{{ 'common.navigation.profile' | translate }}</span>
+  </button>
+  <button mat-menu-item 
+          routerLink="/settings"
+          role="menuitem">
+    <mat-icon>settings</mat-icon>
+    <span>{{ 'common.navigation.settings' | translate }}</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item 
+          (click)="logout()"
+          role="menuitem">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>{{ 'common.navigation.logout' | translate }}</span>
+  </button>
+</mat-menu>
