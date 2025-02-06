@@ -1,0 +1,100 @@
+<nav class="breadcrumb" 
+     aria-label="Breadcrumb navigation" 
+     role="navigation" 
+     data-test="breadcrumb-nav">
+  
+  <!-- Screen reader description -->
+  <span class="screen-reader-only">
+    You are here:
+  </span>
+
+  <!-- Main breadcrumb list -->
+  <ol class="breadcrumb-list" 
+      role="list" 
+      data-test="breadcrumb-list">
+    
+    <!-- Breadcrumb items -->
+    <li class="breadcrumb-item" 
+        role="listitem"
+        *ngFor="let item of breadcrumbs; let first = first; let last = last"
+        [class.active]="last"
+        data-test="breadcrumb-item">
+      
+      <!-- Link for navigable items -->
+      <ng-container *ngIf="!last">
+        <a class="breadcrumb-link"
+           [routerLink]="item.path"
+           [attr.aria-current]="last ? 'page' : null"
+           (click)="navigateTo.emit(item)"
+           (keydown.enter)="navigateTo.emit(item)"
+           (keydown.space)="$event.preventDefault(); navigateTo.emit(item)"
+           [attr.aria-label]="'Navigate to ' + item.label"
+           data-test="breadcrumb-link">
+          {{ item.label }}
+        </a>
+        
+        <!-- Separator for non-last items -->
+        <span class="breadcrumb-separator" 
+              aria-hidden="true"
+              data-test="breadcrumb-separator">
+          <span class="screen-reader-only">separator</span>
+          /
+        </span>
+      </ng-container>
+
+      <!-- Current/last item -->
+      <span *ngIf="last" 
+            class="breadcrumb-current"
+            aria-current="page"
+            data-test="breadcrumb-current">
+        {{ item.label }}
+      </span>
+    </li>
+  </ol>
+
+  <!-- Enrollment Progress Indicator -->
+  <div class="breadcrumb-progress" 
+       *ngIf="currentEnrollment"
+       role="progressbar"
+       [attr.aria-valuenow]="currentEnrollment.progress"
+       [attr.aria-valuemin]="0"
+       [attr.aria-valuemax]="100"
+       [attr.aria-label]="'Enrollment progress: ' + currentEnrollment.progress + '%'"
+       data-test="breadcrumb-progress">
+    
+    <!-- Progress visualization -->
+    <div class="progress-bar"
+         [style.width.%]="currentEnrollment.progress">
+      <span class="screen-reader-only">
+        {{ currentEnrollment.progress }}% complete
+      </span>
+    </div>
+
+    <!-- Stage indicator -->
+    <div class="stage-indicator" 
+         *ngIf="currentEnrollment.currentStage"
+         data-test="stage-indicator">
+      <span class="stage-label">
+        {{ currentEnrollment.currentStage }}
+      </span>
+      <span class="stage-count">
+        Stage {{ currentEnrollment.currentStageNumber }} of {{ currentEnrollment.totalStages }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Mobile optimized view -->
+  <div class="breadcrumb-mobile" 
+       *ngIf="breadcrumbs.length > 2"
+       data-test="breadcrumb-mobile">
+    <button class="back-button"
+            (click)="navigateTo.emit(breadcrumbs[breadcrumbs.length - 2])"
+            aria-label="Go back to previous page">
+      <span aria-hidden="true">&lt;</span>
+      {{ breadcrumbs[breadcrumbs.length - 2].label }}
+    </button>
+    <span class="current-page" aria-current="page">
+      {{ breadcrumbs[breadcrumbs.length - 1].label }}
+    </span>
+  </div>
+</nav>
