@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR" dir="ltr" class="no-js">
+<head>
+  <!-- Character encoding -->
+  <meta charset="utf-8">
+  
+  <!-- Primary meta tags -->
+  <title>AUSTA Integration Platform | Plataforma de Integração AUSTA</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Plataforma digital de cadastramento em saúde para processos médicos simplificados | Digital healthcare enrollment platform for streamlined medical processes">
+  <meta name="theme-color" content="#2196F3">
+  
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="AUSTA Integration Platform">
+  <meta property="og:description" content="Digital healthcare enrollment platform">
+  <meta property="og:image" content="./assets/og-image.png">
+  <meta property="og:type" content="website">
+  
+  <!-- PWA support -->
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192x192.png">
+  
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Fonts - v2.0.0 -->
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" 
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  >
+  
+  <!-- Styles -->
+  <link 
+    rel="stylesheet" 
+    href="./styles.scss"
+    media="print"
+    onload="this.media='all'"
+  >
+  
+  <!-- Structured data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "AUSTA Integration Platform",
+      "description": "Digital healthcare enrollment platform",
+      "url": "https://austa.health"
+    }
+  </script>
+  
+  <!-- Enable JavaScript detection -->
+  <script>document.documentElement.classList.remove('no-js');</script>
+</head>
+
+<body>
+  <!-- Skip link for keyboard navigation -->
+  <a href="#main-content" class="skip-link">
+    Pular para o conteúdo principal | Skip to main content
+  </a>
+  
+  <!-- Application root -->
+  <app-root 
+    role="application" 
+    aria-label="AUSTA Integration Platform"
+  >
+    <!-- Loading state -->
+    <div 
+      class="app-loading" 
+      role="status" 
+      aria-label="Carregando aplicação | Loading application"
+    >
+      <div class="spinner"></div>
+    </div>
+  </app-root>
+  
+  <!-- No JavaScript warning -->
+  <noscript>
+    <div 
+      class="noscript-message" 
+      role="alert"
+    >
+      Para utilizar esta aplicação, ative o JavaScript no seu navegador. | Please enable JavaScript to continue using this application.
+    </div>
+  </noscript>
+  
+  <!-- Service worker registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/ngsw-worker.js')
+          .catch(err => console.error('Service worker registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
