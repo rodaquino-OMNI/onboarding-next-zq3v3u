@@ -1,0 +1,53 @@
+{
+  "name": "austa-test-suite",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"statements\":80,\"branches\":80,\"functions\":80,\"lines\":80}}'",
+    "test:e2e": "cypress run --config video=true,screenshotOnRunFailure=true",
+    "test:accessibility": "axe-cli src/web/dist/**/*.html --rules wcag2aa --disable-rules color-contrast",
+    "test:performance": "k6 run src/test/k6/performance-tests.js --vus 50 --duration 5m",
+    "test:security": "zap-cli quick-scan --self-contained --spider --recursive"
+  },
+  "dependencies": {
+    "jest": "^29.0.0",
+    "cypress": "^12.0.0",
+    "k6": "^0.44.0",
+    "@axe-core/cli": "^4.7.0",
+    "zaproxy": "^2.12.0",
+    "@testing-library/angular": "^14.0.0",
+    "@vonage/video": "^1.0.0",
+    "@hipaa/validation": "^2.0.0",
+    "fhir-validator": "^2.0.0",
+    "uuid": "^9.0.0",
+    "@faker-js/faker": "^7.6.0",
+    "supertest": "^6.3.0",
+    "axios": "^1.4.0",
+    "winston": "^3.8.0",
+    "jsonwebtoken": "^9.0.0",
+    "i18next": "^21.8.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^16.11.7",
+    "@types/cypress": "^12.0.0",
+    "@types/axios": "^0.14.0",
+    "@types/i18n": "^0.13.0",
+    "@types/fhir": "^4.0.1",
+    "typescript": "~4.8.4",
+    "ts-jest": "^29.0.0",
+    "cypress-axe": "^1.4.0",
+    "eslint": "^8.28.0",
+    "prettier": "^2.8.0",
+    "@cypress/code-coverage": "^3.10.0",
+    "@cypress/xpath": "^2.0.0",
+    "@testing-library/cypress": "^9.0.0",
+    "cypress-audit-logger": "^1.0.0"
+  }
+}
