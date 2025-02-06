@@ -1,0 +1,163 @@
+{
+  "rules": {
+    "color-contrast": {
+      "enabled": true,
+      "level": "wcag2aa",
+      "options": {
+        "criticalElements": {
+          "minContrast": 7,
+          "selectors": [
+            "[data-critical='true']",
+            ".medical-info",
+            ".health-declaration"
+          ]
+        },
+        "noScroll": true,
+        "ignoreUnicode": true,
+        "shadowDom": true
+      }
+    },
+    "keyboard-navigable": {
+      "enabled": true,
+      "level": "wcag2aa",
+      "options": {
+        "focusOrder": true,
+        "tabindex": true,
+        "skipLinks": true,
+        "medicalFormElements": {
+          "selectors": [
+            ".medical-form input",
+            ".health-declaration select",
+            "[data-medical-input]"
+          ]
+        }
+      }
+    },
+    "medical-terms-pronunciation": {
+      "enabled": true,
+      "level": "wcag2aa",
+      "selector": "[data-medical-term]",
+      "options": {
+        "requirePronunciation": true,
+        "validateIPA": true,
+        "languageSpecific": true
+      }
+    },
+    "health-data-landmarks": {
+      "enabled": true,
+      "level": "wcag2aa",
+      "selector": "[role='region'][aria-label*='health']",
+      "options": {
+        "requiredRoles": [
+          "region",
+          "form",
+          "contentinfo"
+        ],
+        "requiredLabels": true
+      }
+    },
+    "aria-required-parent": {
+      "enabled": true,
+      "level": "wcag2aa"
+    },
+    "aria-required-children": {
+      "enabled": true,
+      "level": "wcag2aa"
+    },
+    "heading-order": {
+      "enabled": true,
+      "level": "wcag2aa"
+    },
+    "label": {
+      "enabled": true,
+      "level": "wcag2aa",
+      "options": {
+        "requiredAttributes": [
+          "for",
+          "aria-label",
+          "aria-labelledby"
+        ]
+      }
+    }
+  },
+  "locale": {
+    "languages": [
+      "en",
+      "pt-BR"
+    ],
+    "defaultLang": "pt-BR",
+    "translations": {
+      "en": "./src/web/src/assets/i18n/en.json",
+      "pt-BR": "./src/web/src/assets/i18n/pt-BR.json"
+    },
+    "medicalTerms": {
+      "en": "./src/web/src/assets/medical-terms/en.json",
+      "pt-BR": "./src/web/src/assets/medical-terms/pt-BR.json"
+    }
+  },
+  "runOptions": {
+    "resultTypes": [
+      "violations",
+      "incomplete",
+      "passes"
+    ],
+    "selectors": true,
+    "ancestry": true,
+    "xpath": true,
+    "absolutePaths": true,
+    "healthcareValidation": {
+      "enabled": true,
+      "criticalDataSelectors": [
+        "[data-health-critical]",
+        "[aria-medical='true']",
+        ".medical-declaration"
+      ],
+      "validateMedicalTerms": true,
+      "requirePronunciation": true,
+      "enforceHighContrast": true
+    },
+    "restoreScroll": true,
+    "timeout": 30000
+  },
+  "branding": {
+    "application": "AUSTA Integration Platform",
+    "version": "1.0.0",
+    "compliance": {
+      "wcag": "2.1 AA",
+      "healthcare": "HIPAA, LGPD"
+    }
+  },
+  "reporter": {
+    "option": {
+      "elementRef": true,
+      "ancestry": true,
+      "css": true,
+      "xpath": true,
+      "healthcareContext": true
+    }
+  },
+  "checks": [
+    {
+      "id": "medical-term-pronunciation",
+      "evaluate": "node.hasAttribute('data-pronunciation')",
+      "metadata": {
+        "impact": "serious",
+        "messages": {
+          "pass": "Medical term has pronunciation guidance",
+          "fail": "Medical term requires pronunciation guidance"
+        }
+      }
+    },
+    {
+      "id": "health-data-protection",
+      "evaluate": "node.hasAttribute('data-health-critical')",
+      "metadata": {
+        "impact": "critical",
+        "messages": {
+          "pass": "Health data has proper protection attributes",
+          "fail": "Critical health data requires protection attributes"
+        }
+      }
+    }
+  ]
+}
