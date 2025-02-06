@@ -1,0 +1,79 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "@test/*": [
+        "./*"
+      ],
+      "@e2e/*": [
+        "./e2e/*"
+      ],
+      "@integration/*": [
+        "./integration/*"
+      ],
+      "@accessibility/*": [
+        "./accessibility/*"
+      ],
+      "@security/*": [
+        "./security/*"
+      ],
+      "@monitoring/*": [
+        "./monitoring/*"
+      ],
+      "@mocks/*": [
+        "./mocks/*"
+      ],
+      "@utils/*": [
+        "./utils/*"
+      ]
+    },
+    "outDir": "./dist",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "allowJs": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "accessibility/**/*.ts",
+    "e2e/**/*.ts",
+    "integration/**/*.ts",
+    "monitoring/**/*.ts",
+    "security/**/*.ts",
+    "utils/**/*.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
+}
