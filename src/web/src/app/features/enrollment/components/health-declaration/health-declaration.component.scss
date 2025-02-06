@@ -1,0 +1,151 @@
+// Import design system variables and mixins
+@use 'src/web/src/assets/scss/variables' as vars;
+@use 'src/web/src/assets/scss/mixins' as mix;
+
+// Host element configuration
+:host {
+  display: block;
+  margin: map-get(vars.$spacing, scale, md);
+  container-type: inline-size;
+}
+
+// Main form container
+.health-declaration-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: map-get(vars.$spacing, scale, lg);
+  color-scheme: light dark;
+
+  @include mix.responsive-breakpoint(xs) {
+    padding: map-get(vars.$spacing, scale, md);
+  }
+}
+
+// Form sections
+.form-section {
+  margin-bottom: map-get(vars.$spacing, scale, xl);
+  padding: map-get(vars.$spacing, scale, md);
+  border-radius: 8px;
+  background-color: var(--mat-card-background-color);
+  
+  @include mix.elevation(1);
+  
+  @media (prefers-color-scheme: dark) {
+    @include mix.elevation(1, true);
+  }
+
+  h2 {
+    color: var(--mat-primary-text);
+    font-family: map-get(vars.$typography, font-family);
+    font-size: rem(24);
+    margin-bottom: map-get(vars.$spacing, scale, md);
+  }
+}
+
+// Form fields
+.form-field {
+  margin-bottom: map-get(vars.$spacing, scale, md);
+  width: 100%;
+
+  &--required {
+    label::after {
+      content: '*';
+      color: var(--mat-warn-color);
+      margin-left: map-get(vars.$spacing, scale, xs);
+    }
+  }
+
+  // Material form field customization
+  ::ng-deep {
+    .mat-mdc-form-field {
+      width: 100%;
+      
+      .mat-mdc-form-field-wrapper {
+        padding-bottom: map-get(vars.$spacing, scale, sm);
+      }
+
+      .mat-mdc-form-field-hint {
+        font-size: rem(12);
+      }
+    }
+  }
+}
+
+// Medication list grid
+.medication-list {
+  display: grid;
+  gap: map-get(vars.$spacing, grid, column-gap);
+  margin-top: map-get(vars.$spacing, scale, md);
+  
+  @include mix.container-query(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include mix.container-query(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Form actions
+.form-actions {
+  @include mix.flex-layout(row, map-get(vars.$spacing, scale, md));
+  justify-content: flex-end;
+  margin-top: map-get(vars.$spacing, scale, xl);
+  
+  @include mix.responsive-breakpoint(xs) {
+    flex-direction: column;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Accessibility enhancements
+.screen-reader-text {
+  @include mix.screen-reader-only;
+}
+
+// Focus states
+button, 
+input, 
+select, 
+textarea {
+  @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+}
+
+// High contrast mode support
+@media (forced-colors: active) {
+  .form-section {
+    border: 1px solid CanvasText;
+  }
+
+  .form-field {
+    forced-color-adjust: none;
+  }
+}
+
+// RTL support
+[dir="rtl"] {
+  .form-actions {
+    justify-content: flex-start;
+  }
+
+  .form-field--required label::after {
+    margin-right: map-get(vars.$spacing, scale, xs);
+    margin-left: 0;
+  }
+}
+
+// Print styles
+@media print {
+  .health-declaration-form {
+    max-width: none;
+    padding: 0;
+  }
+
+  .form-actions {
+    display: none;
+  }
+}
