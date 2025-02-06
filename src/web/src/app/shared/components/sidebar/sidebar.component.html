@@ -1,0 +1,101 @@
+<!-- Main navigation sidebar with enhanced accessibility -->
+<nav class="sidebar" 
+     [ngClass]="{'sidebar--collapsed': isCollapsed, 'sidebar--open': isMobileOpen}"
+     [attr.aria-expanded]="!isCollapsed"
+     role="navigation"
+     aria-label="Main navigation"
+     cdkScrollable
+     cdkTrapFocus="isCollapsed">
+
+  <!-- Sidebar header with accessible controls -->
+  <div class="sidebar-header">
+    <img src="assets/images/logo.svg" 
+         alt="AUSTA Integration Platform"
+         [ngClass]="{'sidebar-header__logo--collapsed': isCollapsed}">
+    
+    <button class="sidebar-header__toggle"
+            (click)="toggleSidebar()"
+            [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+            [attr.aria-expanded]="!isCollapsed"
+            aria-controls="sidebar-content">
+      <mat-icon>{{ isCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- Role-based navigation menu -->
+  <ul class="sidebar-nav"
+      id="sidebar-content"
+      role="menubar"
+      aria-orientation="vertical">
+    
+    <!-- Dynamic menu items based on user role -->
+    <li *ngFor="let item of menuItems"
+        class="nav-item"
+        [ngClass]="{'nav-item--active': router.url === item.path}"
+        role="menuitem"
+        [attr.aria-current]="router.url === item.path ? 'page' : null"
+        [attr.aria-label]="item.label"
+        tabindex="0"
+        (click)="navigate(item)"
+        (keydown.enter)="navigate(item)"
+        (keydown.space)="navigate(item)"
+        [style.display]="hasPermission(item.roles) ? 'flex' : 'none'">
+      
+      <mat-icon class="nav-icon" 
+                [attr.aria-hidden]="true">{{ item.icon }}</mat-icon>
+      
+      <span class="nav-label">{{ item.label }}</span>
+      
+      <!-- Screen reader notifications for active state -->
+      <span class="screen-reader-only" 
+            *ngIf="router.url === item.path"
+            aria-live="polite">
+        Current page: {{ item.label }}
+      </span>
+    </li>
+  </ul>
+
+  <!-- Sidebar footer with theme controls -->
+  <div class="sidebar-footer">
+    <!-- Theme toggle with accessibility -->
+    <button class="theme-toggle"
+            (click)="toggleTheme()"
+            [attr.aria-label]="isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+            [attr.aria-pressed]="isDarkTheme"
+            aria-controls="theme-settings">
+      <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <!-- High contrast toggle -->
+    <button class="contrast-toggle"
+            (click)="toggleHighContrast()"
+            [attr.aria-label]="isHighContrast ? 'Disable high contrast' : 'Enable high contrast'"
+            [attr.aria-pressed]="isHighContrast">
+      <mat-icon>contrast</mat-icon>
+    </button>
+
+    <!-- User information with ARIA live region -->
+    <div class="user-info" 
+         *ngIf="!isCollapsed"
+         aria-live="polite">
+      <span class="user-name">{{ currentUser?.name }}</span>
+      <span class="user-role">{{ currentUser?.role }}</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile overlay with accessibility -->
+<div class="sidebar-overlay"
+     [ngClass]="{'sidebar-overlay--visible': isMobileOpen}"
+     (click)="closeMobileSidebar()"
+     role="presentation"
+     aria-hidden="true"
+     tabindex="-1">
+</div>
+
+<!-- Skip link for keyboard navigation -->
+<a href="#main-content" 
+   class="screen-reader-only"
+   tabindex="0">
+  Skip to main content
+</a>
