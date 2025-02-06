@@ -1,0 +1,118 @@
+AUSTA INTEGRATION PLATFORM LICENSE AGREEMENT
+Version 1.0.0 (2024)
+
+IMPORTANT: PLEASE READ THIS LICENSE AGREEMENT CAREFULLY BEFORE USING THE SOFTWARE.
+
+1. DEFINITIONS
+
+"Software" means the AUSTA Integration Platform software, including all components, updates, and documentation.
+"Licensor" means AUSTA and its affiliates.
+"Licensee" means the enterprise entity licensed to use the Software.
+"Protected Health Information" or "PHI" means health information as defined by applicable healthcare regulations.
+
+2. GRANT OF LICENSE
+
+Subject to the terms of this Agreement, Licensor grants Licensee a non-exclusive, non-transferable, enterprise license to:
+a) Deploy the Software in authorized healthcare environments
+b) Integrate with approved EMR systems
+c) Use the Software for healthcare enrollment operations
+d) Create and maintain user documentation
+
+3. RESTRICTIONS
+
+Licensee shall not:
+a) Modify, adapt, or create derivative works without written authorization
+b) Reverse engineer, decompile, or disassemble the Software
+c) Remove or alter any proprietary notices or marks
+d) Use the Software for competitive analysis or benchmarking
+e) Transfer, sublicense, or resell the Software
+f) Process data in violation of healthcare regulations
+
+4. COMPLIANCE REQUIREMENTS
+
+Licensee must maintain compliance with:
+a) HIPAA for United States operations
+b) GDPR for European Union data processing
+c) LGPD for Brazilian operations
+d) Applicable encryption standards
+e) Access control requirements
+f) Audit logging mandates
+g) Data breach notification procedures
+
+5. DATA PROTECTION
+
+Licensee shall:
+a) Implement required security controls
+b) Maintain encryption for PHI
+c) Control access to protected data
+d) Log all data access activities
+e) Report security incidents promptly
+f) Maintain compliance documentation
+
+6. AUTHORIZED USE
+
+Software may be used for:
+a) Enterprise healthcare operations
+b) Authorized EMR system integration
+c) Approved environment deployment
+d) User training and documentation
+
+7. PROHIBITED USE
+
+Software may not be used for:
+a) Unauthorized data collection
+b) Non-compliant data processing
+c) Unauthorized system modifications
+d) Competitive analysis
+
+8. WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+9. LIMITATION OF LIABILITY
+
+Licensor's liability shall be limited to amounts paid for the Software license.
+
+10. INDEMNIFICATION
+
+Licensee shall indemnify Licensor against claims arising from:
+a) Non-compliant use
+b) Unauthorized modifications
+c) Violation of healthcare regulations
+
+11. AUDIT RIGHTS
+
+Licensor reserves the right to:
+a) Audit compliance annually or upon notice
+b) Review usage logs and documentation
+c) Verify regulatory compliance
+d) Inspect deployment environments
+
+12. TERMINATION
+
+This Agreement may be terminated upon:
+a) Material breach of terms
+b) Compliance violation
+c) Unauthorized modification
+d) Payment default
+e) Licensee dissolution
+
+13. EFFECTS OF TERMINATION
+
+Upon termination:
+a) All Software use must cease
+b) Software must be uninstalled
+c) Confidential information returned
+d) PHI handled per regulations
+
+14. GOVERNING LAW
+
+This Agreement shall be governed by Brazilian law for Brazilian operations, with additional compliance requirements per jurisdiction of operation.
+
+15. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire understanding between parties regarding the Software's use.
+
+By using the Software, Licensee agrees to be bound by these terms.
+
+Copyright © 2024 AUSTA. All rights reserved.
