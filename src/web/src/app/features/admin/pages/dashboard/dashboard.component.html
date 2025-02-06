@@ -1,0 +1,130 @@
+<!-- Main Dashboard Container -->
+<div class="dashboard-container" role="main" [class.dashboard-container--mobile]="isMobile" 
+     [class.dashboard-container--tablet]="isTablet" [class.dashboard-container--desktop]="isDesktop">
+  
+  <!-- Loading State -->
+  <app-loading 
+    [isVisible]="isLoading"
+    [message]="'ADMIN.DASHBOARD.LOADING' | translate"
+    (retryAction)="loadDashboardData()">
+  </app-loading>
+
+  <!-- Dashboard Header -->
+  <header class="dashboard-header" role="banner">
+    <h1 class="dashboard-title" aria-level="1">
+      {{ 'ADMIN.DASHBOARD.TITLE' | translate }}
+    </h1>
+    <div class="dashboard-actions">
+      <button mat-icon-button 
+              class="refresh-button" 
+              (click)="loadDashboardData()"
+              aria-label="{{ 'ADMIN.DASHBOARD.REFRESH_ARIA' | translate }}">
+        <mat-icon>refresh</mat-icon>
+        <span class="button-text">{{ 'ADMIN.DASHBOARD.REFRESH' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Metrics Grid -->
+  <div class="metrics-grid" role="region" 
+       [class.metrics-grid--single-column]="isMobile"
+       [class.metrics-grid--two-columns]="isTablet"
+       [class.metrics-grid--three-columns]="isDesktop"
+       aria-label="{{ 'ADMIN.DASHBOARD.METRICS_REGION' | translate }}">
+    
+    <!-- Enrollment Metrics Card -->
+    <mat-card class="metric-card enrollment-metrics" tabindex="0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon aria-hidden="true">trending_up</mat-icon>
+          {{ 'ADMIN.DASHBOARD.ENROLLMENT_METRICS' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas *ngIf="enrollmentMetrics"
+                id="enrollmentChart"
+                aria-label="{{ 'ADMIN.DASHBOARD.ENROLLMENT_CHART_ARIA' | translate }}"
+                role="img">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Interview Status Card -->
+    <mat-card class="metric-card interview-metrics" tabindex="0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon aria-hidden="true">video_camera_front</mat-icon>
+          {{ 'ADMIN.DASHBOARD.INTERVIEW_METRICS' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas *ngIf="interviewMetrics"
+                id="interviewChart"
+                aria-label="{{ 'ADMIN.DASHBOARD.INTERVIEW_CHART_ARIA' | translate }}"
+                role="img">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- System Status Card -->
+    <mat-card class="metric-card system-metrics" tabindex="0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon aria-hidden="true">monitoring</mat-icon>
+          {{ 'ADMIN.DASHBOARD.SYSTEM_METRICS' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="status-indicators">
+          <div class="status-item" *ngFor="let status of systemStatus">
+            <span class="status-label">{{ status.label | translate }}</span>
+            <mat-icon [class.status-healthy]="status.healthy"
+                     [class.status-warning]="status.warning"
+                     [class.status-error]="status.error"
+                     [attr.aria-label]="status.ariaLabel | translate">
+              {{status.icon}}
+            </mat-icon>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent Activity Card -->
+    <mat-card class="metric-card activity-metrics" tabindex="0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon aria-hidden="true">update</mat-icon>
+          {{ 'ADMIN.DASHBOARD.RECENT_ACTIVITY' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="activity-list" role="list">
+          <div *ngFor="let activity of recentActivities" 
+               class="activity-item" 
+               role="listitem">
+            <mat-icon aria-hidden="true">{{activity.icon}}</mat-icon>
+            <span class="activity-text">{{ activity.message | translate }}</span>
+            <span class="activity-time" aria-label="{{ 'ADMIN.DASHBOARD.TIME_AGO' | translate:{ time: activity.timeAgo } }}">
+              {{ activity.timeAgo | translate }}
+            </span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError" 
+       class="error-container" 
+       role="alert" 
+       aria-live="polite">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p class="error-message">{{ errorMessage | translate }}</p>
+    <button mat-button 
+            color="primary" 
+            (click)="loadDashboardData()"
+            aria-label="{{ 'ADMIN.DASHBOARD.RETRY_ARIA' | translate }}">
+      {{ 'ADMIN.DASHBOARD.RETRY' | translate }}
+    </button>
+  </div>
+</div>
