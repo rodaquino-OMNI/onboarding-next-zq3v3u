@@ -1,0 +1,27 @@
+[production]
+# Market share and modern browser support
+> 0.5%
+last 2 versions
+Firefox ESR
+not dead
+not IE 11
+
+# Minimum version requirements for modern features
+iOS >= 13
+Safari >= 13
+not ios_saf < 13
+not safari < 13
+Chrome >= 90
+Firefox >= 90
+Edge >= 90
+Android >= 90
+
+# Development environment target browsers
+[development]
+# Latest versions for development testing
+last 1 chrome version
+last 1 firefox version
+last 1 safari version
+last 1 edge version
+last 1 android version
+last 1 ios version
