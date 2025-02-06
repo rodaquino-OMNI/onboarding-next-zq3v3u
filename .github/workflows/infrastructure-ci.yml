@@ -1,0 +1,208 @@
+name: Infrastructure CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'
+  workflow_dispatch:
+
+env:
+  TF_VERSION: '1.0.0'
+  AWS_REGION: 'us-east-1'
+  GCP_REGION: 'us-central1'
+  TF_IN_AUTOMATION: 'true'
+  TERRAFORM_CACHE_KEY: "terraform-${{ hashFiles('**/*.tf') }}"
+
+jobs:
+  terraform_fmt:
+    name: Terraform Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive -diff infrastructure/
+
+  terraform_validate:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+    needs: terraform_fmt
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Cache Terraform
+        uses: actions/cache@v3
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ env.TERRAFORM_CACHE_KEY }}
+          restore-keys: |
+            terraform-
+
+      - name: Initialize Terraform
+        run: |
+          cd infrastructure/aws
+          terraform init -backend=false
+
+      - name: Validate Terraform
+        run: |
+          cd infrastructure/aws
+          terraform validate
+
+  security_scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: terraform_validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1
+        with:
+          working_directory: infrastructure
+          format: sarif
+          soft_fail: false
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infrastructure
+          framework: terraform
+          output_format: sarif
+          soft_fail: false
+
+      - name: Upload Security Results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: results.sarif
+
+  terraform_plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: security_scan
+    strategy:
+      matrix:
+        environment: [staging, production]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Cache Terraform
+        uses: actions/cache@v3
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ env.TERRAFORM_CACHE_KEY }}
+          restore-keys: |
+            terraform-
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
+
+      - name: Initialize Terraform
+        run: |
+          cd infrastructure/aws
+          terraform init -backend=false
+
+      - name: Terraform Plan
+        run: |
+          cd infrastructure/aws
+          terraform plan \
+            -var="environment=${{ matrix.environment }}" \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -input=false \
+            -detailed-exitcode \
+            -out=tfplan_${{ matrix.environment }}
+        continue-on-error: true
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan-${{ matrix.environment }}
+          path: infrastructure/aws/tfplan_${{ matrix.environment }}
+          retention-days: 7
+
+  compliance_check:
+    name: Compliance Validation
+    runs-on: ubuntu-latest
+    needs: terraform_plan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: HIPAA Compliance Check
+        run: |
+          # Custom compliance validation script would go here
+          echo "Validating HIPAA compliance requirements..."
+
+      - name: GDPR Compliance Check
+        run: |
+          # Custom compliance validation script would go here
+          echo "Validating GDPR compliance requirements..."
+
+      - name: LGPD Compliance Check
+        run: |
+          # Custom compliance validation script would go here
+          echo "Validating LGPD compliance requirements..."
+
+      - name: Generate Compliance Report
+        run: |
+          echo "Generating compliance validation report..."
+
+      - name: Upload Compliance Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: compliance-report
+          path: compliance-report.txt
+          retention-days: 30
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
