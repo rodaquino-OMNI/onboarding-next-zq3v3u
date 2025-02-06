@@ -1,0 +1,93 @@
+{
+  "scan": {
+    "dependencies": {
+      "frontend": {
+        "path": "src/web",
+        "package_file": "package.json",
+        "package_lock": "package-lock.json",
+        "analyzers": ["javascript", "nodejs", "npm"]
+      },
+      "backend": {
+        "path": "src/backend", 
+        "package_file": "composer.json",
+        "package_lock": "composer.lock",
+        "analyzers": ["php", "composer"]
+      }
+    },
+    "excludes": [
+      "node_modules",
+      "vendor",
+      "test",
+      "docs",
+      "**/test/**",
+      "**/tests/**",
+      "**/*.spec.ts",
+      "**/*.test.php"
+    ],
+    "formats": ["npm", "composer"],
+    "parallel_analysis": true,
+    "max_parallel_analyses": 4
+  },
+  "analysis": {
+    "cve_check_valid_for_hours": 24,
+    "fail_on_cvss": 7.0,
+    "suppress_cvss_below": 4.0,
+    "retry_count": 5,
+    "retry_delay_in_ms": 3000,
+    "auto_update": true,
+    "data_directory": ".dependency-check/data",
+    "cache_directory": ".dependency-check/cache",
+    "cache_retention_days": 7,
+    "health_check_timeout": 300000
+  },
+  "reporting": {
+    "output_directory": "reports/dependency-check",
+    "output_formats": ["HTML", "JSON", "CSV", "JUNIT", "SARIF"],
+    "report_name": "AUSTA-dependency-check",
+    "show_summary": true,
+    "fail_build_on_cvss": 7.0,
+    "health_check_metrics": true,
+    "include_detailed_reports": true,
+    "report_timestamps": true
+  },
+  "suppression": {
+    "file": "src/test/security/dependency-check-suppressions.xml",
+    "enabled": true,
+    "auto_update": false,
+    "require_justification": true
+  },
+  "advanced": {
+    "cvss_modifier": 0.5,
+    "jar_analyzer": {
+      "enabled": true,
+      "deep_scan": false
+    },
+    "node_audit": {
+      "enabled": true,
+      "skip_dev": false,
+      "audit_level": "high"
+    },
+    "composer_audit": {
+      "enabled": true,
+      "skip_dev": false,
+      "audit_level": "high"
+    },
+    "ossindex_analyzer": {
+      "enabled": true,
+      "api_token": "${OSSINDEX_API_TOKEN}",
+      "rate_limit_pause": 5000
+    },
+    "nvd": {
+      "api_key": "${NVD_API_KEY}",
+      "delay_between_queries": 6000,
+      "max_query_attempts": 3,
+      "timeout_in_ms": 30000
+    },
+    "health_check": {
+      "enabled": true,
+      "critical_threshold": 9.0,
+      "high_threshold": 7.0,
+      "medium_threshold": 4.0
+    }
+  }
+}
