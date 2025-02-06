@@ -1,0 +1,142 @@
+{
+  "BASE_URL": "process.env.API_BASE_URL || 'http://localhost:8000/api/v1'",
+  "API_VERSION": "v1",
+  "stages": {
+    "load": [
+      {
+        "duration": "5m",
+        "target": 100
+      },
+      {
+        "duration": "10m",
+        "target": 100
+      },
+      {
+        "duration": "5m",
+        "target": 0
+      }
+    ],
+    "stress": [
+      {
+        "duration": "3m",
+        "target": 100
+      },
+      {
+        "duration": "5m",
+        "target": 200
+      },
+      {
+        "duration": "7m",
+        "target": 300
+      },
+      {
+        "duration": "5m",
+        "target": 0
+      }
+    ],
+    "spike": [
+      {
+        "duration": "1m",
+        "target": 50
+      },
+      {
+        "duration": "2m",
+        "target": 500
+      },
+      {
+        "duration": "1m",
+        "target": 50
+      }
+    ],
+    "performance": [
+      {
+        "duration": "2m",
+        "target": 50
+      },
+      {
+        "duration": "5m",
+        "target": 150
+      },
+      {
+        "duration": "2m",
+        "target": 0
+      }
+    ]
+  },
+  "thresholds": {
+    "http_req_duration": [
+      "p(95)<200",
+      "p(99)<500"
+    ],
+    "http_req_failed": [
+      "rate<0.01"
+    ],
+    "enrollment_success": [
+      "rate>0.95"
+    ],
+    "document_processing": [
+      "p(90)<5000"
+    ],
+    "video_quality": [
+      "rate>0.98"
+    ]
+  },
+  "scenarios": {
+    "enrollment_load": {
+      "executor": "ramping-vus",
+      "startVUs": 0,
+      "stages": "${stages.load}",
+      "gracefulRampDown": "30s",
+      "thresholds": {
+        "http_req_duration": ["p(95)<200"],
+        "enrollment_success": ["rate>0.95"]
+      }
+    },
+    "document_processing": {
+      "executor": "constant-vus",
+      "vus": 50,
+      "duration": "10m",
+      "thresholds": {
+        "http_req_duration": ["p(90)<5000"],
+        "document_processing": ["p(90)<5000"]
+      }
+    },
+    "video_sessions": {
+      "executor": "ramping-arrival-rate",
+      "startRate": 10,
+      "timeUnit": "1s",
+      "preAllocatedVUs": 50,
+      "maxVUs": 100,
+      "stages": "${stages.performance}",
+      "thresholds": {
+        "http_req_duration": ["p(95)<200"],
+        "video_quality": ["rate>0.98"]
+      }
+    }
+  },
+  "batch_sizes": {
+    "small": 10,
+    "medium": 50,
+    "large": 100
+  },
+  "options": {
+    "noConnectionReuse": false,
+    "userAgent": "K6 Performance Tests v0.40.0",
+    "summaryTrendStats": ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
+    "systemTags": ["status", "method", "url", "name"]
+  },
+  "metrics": {
+    "enrollment_processing_time": {
+      "type": "trend",
+      "contains": "time"
+    },
+    "document_processing_accuracy": {
+      "type": "rate",
+      "contains": "flag"
+    },
+    "video_session_quality": {
+      "type": "rate",
+      "contains": "flag"
+    }
+  }
+}
