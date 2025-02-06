@@ -1,0 +1,228 @@
+// Import core design system variables and mixins
+@use '../../../../../assets/scss/variables' as vars;
+@use '../../../../../assets/scss/mixins' as mix;
+
+// =============================================================================
+// Dashboard Container
+// =============================================================================
+
+.dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: map-get(vars.$spacing, scale, lg);
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+  overflow-x: hidden;
+  contain: layout style;
+
+  // Reduced motion preference
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+// =============================================================================
+// Metrics Grid
+// =============================================================================
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: map-get(vars.$spacing, scale, md);
+  margin-bottom: map-get(vars.$spacing, scale, lg);
+  container-type: inline-size;
+  container-name: metrics;
+
+  @include mix.responsive-breakpoint(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include mix.responsive-breakpoint(md) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// =============================================================================
+// Metric Card
+// =============================================================================
+
+.metric-card {
+  background-color: var(--ion-color-light);
+  border-radius: 12px;
+  padding: map-get(vars.$spacing, scale, md);
+  @include mix.elevation(1);
+  @include mix.material-transition(transform box-shadow);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  // Interactive states
+  &:hover {
+    transform: translateY(-2px);
+    @include mix.elevation(2);
+  }
+
+  &:focus-visible {
+    @include mix.focus-outline(var(--ion-color-primary));
+  }
+
+  // Card header
+  .card-header {
+    @include mix.flex-layout(row, map-get(vars.$spacing, scale, xs));
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: map-get(vars.$spacing, scale, sm);
+
+    h3 {
+      font-size: rem(18px);
+      font-weight: map-get(vars.$typography, weights, medium);
+      margin: 0;
+      color: var(--ion-text-color);
+    }
+  }
+
+  // Card content
+  .card-content {
+    @include mix.flex-layout(column, map-get(vars.$spacing, scale, xs));
+
+    .metric-value {
+      font-size: rem(32px);
+      font-weight: map-get(vars.$typography, weights, bold);
+      color: var(--ion-color-primary);
+    }
+
+    .metric-label {
+      font-size: rem(14px);
+      color: var(--ion-color-medium);
+    }
+  }
+
+  // Status indicators
+  .status-indicator {
+    position: absolute;
+    top: map-get(vars.$spacing, scale, xs);
+    right: map-get(vars.$spacing, scale, xs);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.success { background-color: var(--ion-color-success); }
+    &.warning { background-color: var(--ion-color-warning); }
+    &.error { background-color: var(--ion-color-danger); }
+  }
+}
+
+// =============================================================================
+// Chart Container
+// =============================================================================
+
+.chart-container {
+  width: 100%;
+  margin-top: map-get(vars.$spacing, scale, lg);
+  background-color: var(--ion-color-light);
+  border-radius: 12px;
+  padding: map-get(vars.$spacing, scale, md);
+  @include mix.elevation(1);
+  aspect-ratio: 16 / 9;
+  position: relative;
+
+  // Chart header
+  .chart-header {
+    @include mix.flex-layout(row, map-get(vars.$spacing, scale, sm));
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: map-get(vars.$spacing, scale, md);
+
+    h2 {
+      font-size: rem(20px);
+      font-weight: map-get(vars.$typography, weights, medium);
+      margin: 0;
+    }
+  }
+
+  // Print optimization
+  @media print {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+// =============================================================================
+// Activity Feed
+// =============================================================================
+
+.activity-feed {
+  margin-top: map-get(vars.$spacing, scale, lg);
+
+  .activity-item {
+    @include mix.flex-layout(row, map-get(vars.$spacing, scale, sm));
+    align-items: center;
+    padding: map-get(vars.$spacing, scale, sm);
+    border-bottom: 1px solid var(--ion-color-light-shade);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      @include mix.flex-layout(row);
+      justify-content: center;
+      align-items: center;
+      background-color: var(--ion-color-primary-tint);
+      color: var(--ion-color-primary);
+    }
+
+    .activity-content {
+      flex: 1;
+
+      .activity-title {
+        font-weight: map-get(vars.$typography, weights, medium);
+        margin-bottom: 4px;
+      }
+
+      .activity-timestamp {
+        font-size: rem(12px);
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+// =============================================================================
+// Responsive Adjustments
+// =============================================================================
+
+@include mix.responsive-breakpoint(xs) {
+  .dashboard-container {
+    padding: map-get(vars.$spacing, scale, sm);
+  }
+
+  .metrics-grid {
+    gap: map-get(vars.$spacing, scale, sm);
+  }
+
+  .metric-card {
+    .card-content {
+      .metric-value {
+        font-size: rem(24px);
+      }
+    }
+  }
+}
+
+// High contrast mode support
+@media (forced-colors: active) {
+  .metric-card {
+    border: 1px solid CanvasText;
+  }
+
+  .status-indicator {
+    border: 1px solid CanvasText;
+  }
+}
