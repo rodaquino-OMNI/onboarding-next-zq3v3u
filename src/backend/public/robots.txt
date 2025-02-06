@@ -1,0 +1,56 @@
+# AUSTA Integration Platform - Web Crawler Configuration
+# Version: 1.0
+# Last Updated: 2024
+# Security Level: Critical
+
+# Default User Agent Rules
+User-agent: *
+
+# Crawl Rate Control
+Crawl-delay: 10
+
+# Blocked Healthcare Data Paths
+Disallow: /api/
+Disallow: /admin/
+Disallow: /enrollment/
+Disallow: /documents/
+Disallow: /interviews/
+Disallow: /health-records/
+Disallow: /webhooks/
+Disallow: /video/
+Disallow: /ocr/
+Disallow: /emr/
+Disallow: /user/
+Disallow: /profile/
+Disallow: /settings/
+Disallow: /notifications/
+Disallow: /reports/
+
+# Allowed Public Pages
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /faq
+Allow: /support
+Allow: /blog
+Allow: /news
+Allow: /careers
+
+# XML Sitemap Location
+Sitemap: https://austa.health/sitemap.xml
+
+# Healthcare-Specific Crawler
+User-agent: GoogleBot-Health
+Disallow: /
+
+# Security Scanner Prevention
+User-agent: SecurityScanner
+User-agent: Scanning-bot
+User-agent: Scanner
+User-agent: Acunetix
+User-agent: ZmEu
+Disallow: /
