@@ -1,0 +1,75 @@
+<!-- Video controls container with ARIA role and label -->
+<div class="video-controls" role="group" aria-label="Video call controls" [attr.aria-live]="'polite'">
+  <!-- Connection quality indicator -->
+  <div class="quality-indicator" role="status" [attr.aria-label]="'Connection quality: ' + connectionQuality?.status">
+    <mat-icon [class]="'quality-icon ' + connectionQuality?.status" 
+             [attr.aria-hidden]="true">
+      {{ connectionQuality?.status === 'good' ? 'network_check' : 
+         connectionQuality?.status === 'fair' ? 'network_3_bar' : 'network_1_bar' }}
+    </mat-icon>
+  </div>
+
+  <!-- Camera control button -->
+  <button mat-icon-button
+          class="control-button camera-control"
+          [class.enabled]="isVideoEnabled"
+          [attr.aria-label]="'Toggle camera. Currently ' + (isVideoEnabled ? 'enabled' : 'disabled')"
+          [attr.aria-pressed]="isVideoEnabled"
+          [matTooltip]="'Turn camera ' + (isVideoEnabled ? 'off' : 'on') + ' (Alt+V)'"
+          matTooltipPosition="above"
+          (click)="toggleVideo()">
+    <mat-icon [class.enabled]="isVideoEnabled">
+      {{ isVideoEnabled ? 'videocam' : 'videocam_off' }}
+    </mat-icon>
+  </button>
+
+  <!-- Microphone control button -->
+  <button mat-icon-button
+          class="control-button mic-control"
+          [class.enabled]="isAudioEnabled"
+          [attr.aria-label]="'Toggle microphone. Currently ' + (isAudioEnabled ? 'enabled' : 'disabled')"
+          [attr.aria-pressed]="isAudioEnabled"
+          [matTooltip]="'Turn microphone ' + (isAudioEnabled ? 'off' : 'on') + ' (Alt+M)'"
+          matTooltipPosition="above"
+          (click)="toggleAudio()">
+    <mat-icon [class.enabled]="isAudioEnabled">
+      {{ isAudioEnabled ? 'mic' : 'mic_off' }}
+    </mat-icon>
+  </button>
+
+  <!-- End interview button -->
+  <button mat-icon-button
+          color="warn"
+          class="control-button end-call"
+          [attr.aria-label]="'End interview session'"
+          [matTooltip]="'End interview session (Alt+E)'"
+          matTooltipPosition="above"
+          (click)="endSession()">
+    <mat-icon>call_end</mat-icon>
+  </button>
+
+  <!-- Error message display -->
+  <div *ngIf="errorMessage"
+       class="error-message"
+       role="alert"
+       aria-live="assertive">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Hidden elements for screen reader announcements -->
+  <div class="sr-only"
+       aria-live="polite"
+       [attr.aria-atomic]="true">
+    {{ isAccessibilityEnabled ? 'Screen reader announcements enabled' : '' }}
+  </div>
+
+  <!-- Keyboard shortcut hints -->
+  <div class="keyboard-shortcuts" 
+       role="complementary" 
+       aria-label="Keyboard shortcuts">
+    <span class="sr-only">
+      Available shortcuts: Alt+V for camera, Alt+M for microphone, Alt+E to end call
+    </span>
+  </div>
+</div>
