@@ -1,0 +1,63 @@
+# Requires at least one core team review
+* @austa-platform/core-team
+
+# Backend API Controllers - Security critical
+src/backend/app/Http/Controllers/API/ @austa-platform/backend-team @austa-platform/security-team @austa-platform/tech-leads
+
+# Authentication & Authorization Services
+src/backend/app/Services/Auth/ @austa-platform/security-team @austa-platform/compliance-team
+
+# EMR Integration Services - HIPAA compliance
+src/backend/app/Services/EMR/ @austa-platform/integration-team @austa-platform/compliance-team
+
+# Video Conferencing Services
+src/backend/app/Services/Video/ @austa-platform/integration-team @austa-platform/security-team
+
+# Frontend Enrollment Components - GDPR/LGPD compliance
+src/web/src/app/components/enrollment/ @austa-platform/frontend-team @austa-platform/compliance-team
+
+# Frontend Authentication Services
+src/web/src/app/services/auth/ @austa-platform/frontend-team @austa-platform/security-team
+
+# Infrastructure Configurations
+infrastructure/ @austa-platform/devops-team @austa-platform/security-team @austa-platform/tech-leads
+
+# Security Test Suites
+src/test/security/ @austa-platform/security-team @austa-platform/qa-team
+
+# Compliance Test Suites
+src/test/compliance/ @austa-platform/compliance-team @austa-platform/security-team @austa-platform/qa-team
+
+# CI/CD Workflows
+.github/workflows/ @austa-platform/devops-team @austa-platform/security-team
+
+# Core Models with HIPAA/GDPR Requirements
+src/backend/app/Models/User.php @austa-platform/backend-team @austa-platform/security-team @austa-platform/compliance-team
+src/backend/app/Models/Document.php @austa-platform/backend-team @austa-platform/security-team @austa-platform/compliance-team
+src/backend/app/Models/HealthRecord.php @austa-platform/backend-team @austa-platform/security-team @austa-platform/compliance-team
+src/backend/app/Models/Enrollment.php @austa-platform/backend-team @austa-platform/security-team @austa-platform/compliance-team
+
+# Security Middleware
+src/backend/app/Http/Middleware/Authenticate.php @austa-platform/security-team
+src/backend/app/Http/Middleware/CheckRole.php @austa-platform/security-team
+src/backend/app/Http/Middleware/RateLimiter.php @austa-platform/security-team
+
+# Exception Handling
+src/backend/app/Exceptions/ @austa-platform/backend-team @austa-platform/security-team
+
+# Application Configuration
+src/backend/config/ @austa-platform/tech-leads @austa-platform/security-team
+
+# Frontend Configuration
+src/web/angular.json @austa-platform/frontend-team @austa-platform/tech-leads
+src/web/tsconfig.json @austa-platform/frontend-team @austa-platform/tech-leads
+
+# Package Dependencies
+package.json @austa-platform/tech-leads @austa-platform/security-team
+composer.json @austa-platform/tech-leads @austa-platform/security-team
+
+# Documentation
+docs/ @austa-platform/tech-leads @austa-platform/compliance-team
+
+# Database Migrations
+src/backend/database/migrations/ @austa-platform/backend-team @austa-platform/security-team @austa-platform/compliance-team
