@@ -1,0 +1,74 @@
+includes:
+    # Laravel-specific static analysis rules
+    - vendor/nunomaduro/larastan/extension.neon
+    # Additional rules for deprecated code detection
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    # Maximum level of strictness (0-8)
+    level: 8
+
+    # Paths to analyze
+    paths:
+        - app
+        - tests
+
+    # Type checking configuration
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    checkUnionTypes: true
+    treatPhpDocTypesAsCertain: true
+
+    # Parallel processing configuration for CI/CD pipeline
+    parallel:
+        maximumNumberOfProcesses: 4
+        processTimeout: 300
+
+    # Directories to scan for class definitions
+    scanDirectories:
+        - vendor/laravel/framework/src
+
+    # Dynamic constants specific to Laravel
+    dynamicConstantNames:
+        - LARAVEL_START
+
+    # Methods that terminate execution
+    earlyTerminatingMethodCalls:
+        - abort
+        - dd
+        - die
+
+    # Excluded paths from analysis
+    excludePaths:
+        - app/Console/Kernel.php
+        - app/Exceptions/Handler.php
+
+    # Healthcare-specific custom rules
+    ignoreErrors:
+        # Allow specific PHI-related type coercions
+        - '#PHI data type .* is not coercible#'
+        # Ignore specific Laravel magic method calls
+        - '#Call to an undefined method .+Model::(find|where|create)#'
+        # Allow dynamic property access for FHIR resources
+        - '#Access to an undefined property .+Resource::\$#'
+
+    # Report configuration
+    reportUnmatchedIgnoredErrors: true
+
+    # Custom rules for healthcare data handling
+    rules:
+        - PHPStan\Rules\Classes\RequireParentConstructCallRule
+        - PHPStan\Rules\Deprecations\DeprecatedClassHelper
+        - PHPStan\Rules\Methods\ReturnTypeRule
+        - PHPStan\Rules\Properties\ReadOnlyPropertyRule
+        - PHPStan\Rules\Variables\DefinedVariableRule
+
+    # Memory limit for analysis process
+    memoryLimit: 1G
+
+    # Strict types enforcement
+    strictRules:
+        allRules: true
+        strictCalls: true
+        strictMethods: true
+        strictProperties: true
