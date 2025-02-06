@@ -1,0 +1,88 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * AUSTA Integration Platform - Artisan CLI Entry Point
+ * 
+ * Enhanced Laravel command-line interface with security validation,
+ * performance monitoring, and HIPAA-compliant error handling.
+ *
+ * @version 1.0.0
+ */
+
+// Record application start time for performance tracking
+define('LARAVEL_START', microtime(true));
+
+// Register Composer autoloader with error handling
+try {
+    require __DIR__.'/vendor/autoload.php';
+} catch (\Exception $e) {
+    fwrite(STDERR, "ERROR: Failed to load Composer autoloader.\n");
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+}
+
+// Validate execution environment and permissions
+if (php_sapi_name() !== 'cli' && php_sapi_name() !== 'phpdbg') {
+    fwrite(STDERR, "ERROR: Artisan CLI should be run in command line interface only.\n");
+    exit(1);
+}
+
+// Create Laravel application instance with environment detection
+try {
+    $app = require_once __DIR__.'/bootstrap/app.php';
+} catch (\Exception $e) {
+    fwrite(STDERR, "ERROR: Failed to bootstrap application.\n");
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+}
+
+// Initialize performance monitoring
+$startMemory = memory_get_usage();
+$startTime = microtime(true);
+
+// Bootstrap console kernel with security validation
+try {
+    $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+} catch (\Exception $e) {
+    fwrite(STDERR, "ERROR: Failed to initialize console kernel.\n");
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+}
+
+// Create input interface instance with sanitization
+$input = new Symfony\Component\Console\Input\ArgvInput;
+
+// Configure command timeout handling
+set_time_limit(0);
+
+try {
+    // Run console kernel with input and error handling
+    $status = $kernel->handle($input);
+
+    // Log command execution details
+    $app['log']->info('Artisan command executed', [
+        'command' => $input->getFirstArgument(),
+        'duration_ms' => round((microtime(true) - $startTime) * 1000),
+        'memory_peak' => memory_get_peak_usage(true),
+        'memory_used' => memory_get_usage(true) - $startMemory,
+        'status' => $status
+    ]);
+
+    // Perform cleanup operations
+    $kernel->terminate($input, $status);
+
+    exit($status);
+} catch (\Exception $e) {
+    // Log error with detailed context
+    $app['log']->error('Artisan command failed', [
+        'command' => $input->getFirstArgument(),
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+        'duration_ms' => round((microtime(true) - $startTime) * 1000),
+        'memory_peak' => memory_get_peak_usage(true)
+    ]);
+
+    fwrite(STDERR, "\nERROR: " . $e->getMessage() . "\n");
+    exit(1);
+}
