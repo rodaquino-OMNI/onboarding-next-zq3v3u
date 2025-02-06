@@ -1,0 +1,96 @@
+# Environment Files
+.env
+.env.backup
+.env.*.backup
+.env.production
+.env.staging
+.env.testing
+.env.local
+.env.development
+
+# Dependencies
+/vendor
+/node_modules
+npm-debug.log
+yarn-error.log
+composer.lock
+package-lock.json
+
+# IDE & Editor Files
+/.idea
+/.vscode
+/.fleet
+/.phpstorm.meta.php
+/_ide_helper.php
+/_ide_helper_models.php
+.phpunit.result.cache
+
+# Storage & Cache
+/storage/*.key
+/storage/app/public/*
+!/storage/app/public/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/app/hipaa/*
+!/storage/app/hipaa/.gitkeep
+
+# Public Storage
+/public/storage
+/public/hot
+/public/build
+/public/css
+/public/js
+/public/mix-manifest.json
+
+# Testing & Coverage
+/coverage
+.phpunit.cache
+.phpunit.result.cache
+phpunit.xml
+
+# Laravel Specific
+Homestead.json
+Homestead.yaml
+auth.json
+/.vagrant
+
+# Security & Keys
+*.pem
+*.key
+*.pub
+*.crt
+*.csr
+*.p12
+*.pfx
+*.der
+
+# Temporary Files
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.bak
+*.cache
+*.log
+*.tmp
+
+# Local Development
+docker-compose.override.yml
+/docker/data
+.docker-sync
+
+# Sensitive Data Directories
+/storage/app/phi/*
+!/storage/app/phi/.gitkeep
+/storage/app/encrypted/*
+!/storage/app/encrypted/.gitkeep
+/storage/app/audit/*
+!/storage/app/audit/.gitkeep
