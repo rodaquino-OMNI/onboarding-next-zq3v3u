@@ -1,0 +1,108 @@
+<!-- Main interview room container with ARIA labels -->
+<div class="interview-room-container" role="main" aria-label="Video interview room">
+  <!-- Loading overlay with accessible progress indicator -->
+  <div class="loading-overlay" *ngIf="isLoading" role="alert" aria-live="polite">
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="48"
+      aria-label="Loading interview room">
+    </mat-progress-spinner>
+    <span class="loading-message">Initializing video interview...</span>
+  </div>
+
+  <!-- Network quality indicator with live updates -->
+  <div class="quality-indicator" 
+       [class.poor]="networkQuality < 0.5"
+       role="status" 
+       aria-live="polite">
+    <div class="quality-status">
+      <span class="quality-icon" [ngClass]="getQualityIconClass()"></span>
+      <span class="quality-text">{{ getQualityMessage() }}</span>
+    </div>
+  </div>
+
+  <!-- Video streams container -->
+  <div class="video-container" [class.poor-quality]="networkQuality < 0.5">
+    <!-- Local video stream -->
+    <div class="stream-container local" 
+         [class.disabled]="!isVideoEnabled"
+         role="region" 
+         aria-label="Your video stream">
+      <div #localVideo id="publisher"></div>
+      <div class="stream-overlay" *ngIf="!isVideoEnabled">
+        <mat-icon>videocam_off</mat-icon>
+        <span>Camera disabled</span>
+      </div>
+    </div>
+
+    <!-- Remote video stream -->
+    <div class="stream-container remote"
+         [class.disabled]="!remoteVideoEnabled"
+         role="region" 
+         aria-label="Remote participant's video stream">
+      <div #remoteVideo id="subscriber"></div>
+      <div class="stream-overlay" *ngIf="!remoteVideoEnabled">
+        <mat-icon>person_off</mat-icon>
+        <span>Remote video disabled</span>
+      </div>
+    </div>
+
+    <!-- Video controls component -->
+    <app-video-controls
+      class="controls-container"
+      [networkQuality]="streamQuality"
+      [isVideoEnabled]="isVideoEnabled"
+      [isAudioEnabled]="isAudioEnabled"
+      (endInterview)="handleSessionEnd()"
+      (qualityChange)="handleQualityChange($event)">
+    </app-video-controls>
+  </div>
+
+  <!-- Interview notes section -->
+  <div class="notes-container" role="complementary" aria-label="Interview notes">
+    <form [formGroup]="notesForm" (ngSubmit)="saveInterviewNotes($event)">
+      <mat-form-field appearance="fill" class="notes-field">
+        <mat-label>Interview Notes</mat-label>
+        <textarea matInput
+                  formControlName="notes"
+                  rows="4"
+                  placeholder="Enter interview notes..."
+                  aria-label="Interview notes input"
+                  [attr.aria-invalid]="notesForm.get('notes').invalid">
+        </textarea>
+        <mat-error *ngIf="notesForm.get('notes').hasError('required')" role="alert">
+          Notes are required for the interview record
+        </mat-error>
+      </mat-form-field>
+
+      <div class="notes-actions">
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="!notesForm.valid || isSaving"
+                aria-label="Save interview notes">
+          <mat-icon>save</mat-icon>
+          <span>Save Notes</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Error notifications -->
+  <div class="error-container" 
+       *ngIf="errorMessage"
+       role="alert" 
+       aria-live="assertive">
+    <div class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+  </div>
+
+  <!-- Accessibility announcements container -->
+  <div class="visually-hidden" 
+       aria-live="polite" 
+       role="status">
+    {{ accessibilityAnnouncement }}
+  </div>
+</div>
