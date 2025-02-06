@@ -1,0 +1,34 @@
+# EditorConfig is awesome: https://EditorConfig.org
+# Version: editorconfig@0.15.0
+
+# top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# TypeScript and JavaScript files
+[*.{ts,js}]
+indent_size = 2
+quote_type = single
+max_line_length = 100
+curly = true
+eol-last = true
+no-trailing-spaces = true
+
+# HTML and SCSS files
+[*.{html,scss}]
+indent_size = 2
+max_line_length = 120
+quote_type = double
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
