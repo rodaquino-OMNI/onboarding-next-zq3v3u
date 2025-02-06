@@ -1,0 +1,44 @@
+dist/**/*
+www/**/*
+.angular/**/*
+
+# Dependencies
+node_modules/**/*
+
+# Test coverage output
+coverage/**/*
+
+# Static assets
+src/assets/**/*
+
+# Environment configurations
+src/environments/*.js
+
+# Minified files
+*.min.js
+
+# Stylesheets
+*.css
+*.scss
+
+# Templates
+*.html
+
+# Configuration files
+*.json
+*.md
+
+# Images and icons
+*.svg
+*.ico
+
+# Test files
+*.spec.ts
+*.e2e-spec.ts
+src/test/**/*
+
+# Configuration files
+karma.conf.js
+jest.config.js
+cypress.config.ts
+capacitor.config.ts
