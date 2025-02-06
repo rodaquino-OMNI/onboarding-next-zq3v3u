@@ -1,0 +1,176 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Save",
+      "save_draft": "Save Draft",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "back": "Back",
+      "upload": "Upload",
+      "delete": "Delete",
+      "edit": "Edit",
+      "submit": "Submit",
+      "schedule": "Schedule",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "aria_labels": {
+      "save_button": "Save current progress",
+      "cancel_button": "Cancel current operation", 
+      "upload_button": "Upload document",
+      "menu_toggle": "Toggle navigation menu",
+      "notification": "Notification message",
+      "loading": "Content is loading",
+      "required_field": "This field is required",
+      "error_message": "Error message",
+      "success_message": "Success message",
+      "navigation_menu": "Main navigation menu",
+      "user_menu": "User profile menu",
+      "language_selector": "Language selection menu"
+    },
+    "status": {
+      "loading": "Loading...",
+      "processing": "Processing...",
+      "success": "Success",
+      "error": "Error",
+      "completed": "Completed",
+      "pending": "Pending",
+      "in_progress": "In Progress"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email Address",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot Password?",
+      "remember_me": "Remember Me"
+    },
+    "register": {
+      "title": "Create Account",
+      "name": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "submit": "Create Account",
+      "terms_agree": "I agree to the Terms of Service and Privacy Policy"
+    }
+  },
+  "enrollment": {
+    "steps": {
+      "personal_info": "Personal Information",
+      "documents": "Document Upload",
+      "health_declaration": "Health Declaration",
+      "interview": "Medical Interview",
+      "review": "Review & Submit"
+    },
+    "personal_info": {
+      "title": "Personal Information",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "date_of_birth": "Date of Birth",
+      "gender": "Gender",
+      "phone": "Phone Number",
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "zip": "ZIP Code"
+    }
+  },
+  "documents": {
+    "upload": {
+      "title": "Document Upload",
+      "drag_drop": "Drag and drop files here or click to upload",
+      "supported_formats": "Supported formats: PDF, JPG, PNG",
+      "max_size": "Maximum file size: 10MB",
+      "required_docs": {
+        "id": "Government-issued ID",
+        "address_proof": "Proof of Address",
+        "health_records": "Previous Health Records"
+      }
+    },
+    "processing": {
+      "status": "Processing document...",
+      "ocr_progress": "OCR Processing: {{progress}}%",
+      "verification": "Document verification in progress"
+    }
+  },
+  "interview": {
+    "scheduling": {
+      "title": "Schedule Medical Interview",
+      "select_date": "Select Date",
+      "select_time": "Select Time",
+      "interviewer": "Medical Interviewer",
+      "duration": "Expected Duration: 30 minutes",
+      "timezone": "All times are in {{timezone}}"
+    },
+    "preparation": {
+      "title": "Interview Preparation",
+      "requirements": "Required Documents",
+      "guidelines": "Interview Guidelines",
+      "technical_check": "Technical Requirements Check"
+    }
+  },
+  "health": {
+    "declaration": {
+      "title": "Health Declaration",
+      "medical_history": "Medical History",
+      "current_medications": "Current Medications",
+      "allergies": "Allergies",
+      "conditions": "Pre-existing Conditions",
+      "family_history": "Family Medical History"
+    },
+    "consent": {
+      "title": "Health Information Consent",
+      "data_usage": "I understand how my health information will be used",
+      "sharing": "I consent to sharing my health information as described",
+      "revocation": "I understand I can revoke this consent at any time"
+    }
+  },
+  "privacy": {
+    "hipaa_notice": {
+      "title": "HIPAA Privacy Notice",
+      "summary": "Your Health Information Privacy Rights",
+      "data_usage": "This notice describes how medical information about you may be used and disclosed and how you can get access to this information. Please review it carefully.",
+      "consent_text": "By proceeding, you acknowledge that you have received and understand our Notice of Privacy Practices"
+    },
+    "data_handling": {
+      "collection": "We collect health information to provide you with quality healthcare services",
+      "protection": "Your information is protected using industry-standard security measures",
+      "sharing": "Your health information may be shared with other healthcare providers involved in your care",
+      "rights": "You have the right to access, correct, and request restrictions on your health information"
+    }
+  },
+  "accessibility": {
+    "screen_reader": {
+      "navigation": "Main navigation menu",
+      "form_error": "The form contains errors that need to be corrected",
+      "required_field": "This field is required",
+      "loading_state": "Please wait while the content loads",
+      "modal_open": "Dialog window opened",
+      "modal_close": "Dialog window closed"
+    },
+    "aria_descriptions": {
+      "document_upload": "Upload your medical documents. Supported formats are PDF, JPG, and PNG",
+      "health_form": "Complete your health declaration form with medical history and current conditions",
+      "interview_schedule": "Schedule your medical interview with a healthcare professional"
+    }
+  },
+  "errors": {
+    "form": {
+      "required": "This field is required",
+      "email_invalid": "Please enter a valid email address",
+      "password_mismatch": "Passwords do not match",
+      "min_length": "Minimum length is {{length}} characters",
+      "max_length": "Maximum length is {{length}} characters"
+    },
+    "api": {
+      "general": "An error occurred. Please try again",
+      "network": "Network connection error. Please check your internet connection",
+      "unauthorized": "Unauthorized access. Please sign in",
+      "forbidden": "You don't have permission to access this resource",
+      "not_found": "The requested resource was not found"
+    }
+  }
+}
