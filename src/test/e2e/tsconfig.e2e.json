@@ -1,0 +1,45 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [
+      "cypress",
+      "node",
+      "@faker-js/faker"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@e2e/*": ["./*"],
+      "@fixtures/*": ["./fixtures/*"],
+      "@support/*": ["./support/*"],
+      "@specs/*": ["./specs/*"]
+    },
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": false,
+    "noEmit": true
+  },
+  "include": [
+    "**/*.ts",
+    "fixtures/**/*.json",
+    "support/**/*.ts", 
+    "specs/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
