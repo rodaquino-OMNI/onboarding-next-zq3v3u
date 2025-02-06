@@ -1,0 +1,91 @@
+{
+    "name": "austa/integration-platform",
+    "type": "project",
+    "description": "AUSTA Integration Platform - Digital Healthcare Enrollment Solution with AI-powered document processing and video interviews",
+    "keywords": [
+        "healthcare",
+        "enrollment",
+        "laravel",
+        "api",
+        "ocr",
+        "video-interviews",
+        "multi-language"
+    ],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1",
+        "aws/aws-sdk-php": "^3.0",
+        "doctrine/dbal": "^3.0",
+        "fideloper/proxy": "^4.4",
+        "fruitcake/laravel-cors": "^3.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "guzzlehttp/psr7": "^2.4",
+        "laravel/fortify": "^1.0",
+        "laravel/framework": "^9.0",
+        "laravel/sanctum": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "monolog/monolog": "^2.0",
+        "predis/predis": "^2.0",
+        "psr/log": "^3.0",
+        "pusher/pusher-php-server": "^7.0",
+        "sentry/sentry-laravel": "^2.0",
+        "spatie/laravel-permission": "^5.0",
+        "vlucas/phpdotenv": "^5.4",
+        "vonage/client": "^3.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.9.1",
+        "friendsofphp/php-cs-fixer": "^3.14",
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.0.1",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^6.1",
+        "nunomaduro/larastan": "^2.0",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
