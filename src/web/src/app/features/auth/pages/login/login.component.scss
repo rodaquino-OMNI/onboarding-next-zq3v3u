@@ -1,0 +1,214 @@
+// Import design system variables and mixins
+@use '../../../../../assets/scss/variables' as vars;
+@use '../../../../../assets/scss/mixins' as mix;
+
+// Login container - full viewport height with centered content
+.login-container {
+  height: 100vh;
+  @include mix.flex-layout(column);
+  justify-content: center;
+  align-items: center;
+  background-color: map-get(vars.$colors, surface, light);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, surface, dark);
+  }
+
+  // Print styles
+  @media print {
+    height: auto;
+    padding: map-get(vars.$spacing, scale, md);
+  }
+}
+
+// Login card with elevation and focus states
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: map-get(vars.$spacing, scale, xl);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  background: map-get(vars.$colors, background, light);
+  @include mix.elevation(2);
+  @include mix.material-transition(transform);
+
+  @media (prefers-color-scheme: dark) {
+    background: map-get(vars.$colors, background, dark);
+    @include mix.elevation(2, true);
+  }
+
+  &:focus-within {
+    @include mix.elevation(3);
+    transform: translateY(-2px);
+  }
+}
+
+// Login header with title
+.login-header {
+  margin-bottom: map-get(vars.$spacing, scale, xl);
+  text-align: center;
+
+  h1 {
+    font-family: map-get(vars.$typography, font-family);
+    font-size: rem(24);
+    font-weight: map-get(vars.$typography, weights, medium);
+    color: map-get(vars.$colors, text, primary, light);
+    margin: 0;
+
+    @media (prefers-color-scheme: dark) {
+      color: map-get(vars.$colors, text, primary, dark);
+    }
+  }
+}
+
+// Login form with loading state
+.login-form {
+  width: 100%;
+  @include mix.flex-layout(column, map-get(vars.$spacing, scale, md));
+
+  &[aria-busy='true'] {
+    opacity: map-get(vars.$colors, opacity, disabled);
+    pointer-events: none;
+  }
+}
+
+// Form field wrapper
+.form-field {
+  width: 100%;
+  @include mix.flex-layout(column, map-get(vars.$spacing, scale, xs));
+
+  label {
+    @include mix.screen-reader-only;
+  }
+}
+
+// Input field styling with states
+.input-field {
+  width: 100%;
+  padding: map-get(vars.$spacing, component, input-padding);
+  border: 2px solid map-get(vars.$colors, text, secondary, light);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  font-family: map-get(vars.$typography, font-family);
+  font-size: rem(16);
+  color: map-get(vars.$colors, text, primary, light);
+  background: transparent;
+  @include mix.material-transition(border-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: map-get(vars.$colors, text, primary, dark);
+    border-color: map-get(vars.$colors, text, secondary, dark);
+  }
+
+  &:hover {
+    border-color: map-get(vars.$colors, text, primary, light);
+
+    @media (prefers-color-scheme: dark) {
+      border-color: map-get(vars.$colors, text, primary, dark);
+    }
+  }
+
+  &:focus {
+    @include mix.focus-outline(map-get(vars.$colors, primary), 0, true);
+    border-color: map-get(vars.$colors, primary);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: map-get(vars.$colors, state, error);
+  }
+}
+
+// Submit button styling
+.submit-button {
+  width: 100%;
+  padding: map-get(vars.$spacing, component, input-padding);
+  background: map-get(vars.$colors, primary);
+  color: map-get(vars.$colors, background, light);
+  border: none;
+  border-radius: map-get(vars.$spacing, scale, xs);
+  font-family: map-get(vars.$typography, font-family);
+  font-weight: map-get(vars.$typography, weights, medium);
+  font-size: rem(16);
+  cursor: pointer;
+  @include mix.material-transition(background-color);
+
+  &:hover:not(:disabled) {
+    background: darken(map-get(vars.$colors, primary), 5%);
+  }
+
+  &:focus {
+    @include mix.focus-outline(map-get(vars.$colors, primary), 2, true);
+  }
+
+  &:disabled {
+    opacity: map-get(vars.$colors, opacity, disabled);
+    cursor: not-allowed;
+  }
+}
+
+// Error message styling
+.error-message {
+  color: map-get(vars.$colors, state, error);
+  font-size: rem(14);
+  margin-top: map-get(vars.$spacing, scale, xs);
+  display: flex;
+  align-items: center;
+  gap: map-get(vars.$spacing, scale, xs);
+
+  &::before {
+    content: '!';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: map-get(vars.$colors, state, error);
+    color: map-get(vars.$colors, background, light);
+    font-weight: map-get(vars.$typography, weights, bold);
+  }
+}
+
+// Responsive breakpoints
+@include mix.responsive-breakpoint(xs) {
+  .login-card {
+    margin: map-get(vars.$spacing, scale, xs);
+    padding: map-get(vars.$spacing, scale, md);
+    max-width: 100%;
+  }
+
+  .login-header h1 {
+    font-size: rem(20);
+  }
+
+  .input-field,
+  .submit-button {
+    padding: map-get(vars.$spacing, scale, xs);
+  }
+}
+
+@include mix.responsive-breakpoint(sm) {
+  .login-card {
+    margin: 0;
+    padding: map-get(vars.$spacing, scale, xl);
+    max-width: 400px;
+  }
+
+  .login-header h1 {
+    font-size: rem(24);
+  }
+}
+
+// Print styles
+@media print {
+  .login-container {
+    background: none;
+  }
+
+  .login-card {
+    box-shadow: none;
+    border: 1px solid map-get(vars.$colors, text, secondary, light);
+  }
+
+  .submit-button {
+    display: none;
+  }
+}
