@@ -1,0 +1,24 @@
+Format: PNG
+Dimensions: 512x512 pixels
+Color Space: RGB with alpha channel (transparency)
+Primary Color: #2196F3 (Material Design Blue)
+Background Color: #ffffff (White)
+Purpose: maskable any
+File Size Target: < 100KB
+Compression: Lossless PNG optimization
+
+The icon should be created using vector graphics software (e.g., Adobe Illustrator, Figma, or Inkscape) and exported with the following characteristics:
+
+1. Square canvas of 512x512 pixels
+2. Safe area within 48px margin for maskable icon support
+3. Primary brand color #2196F3 for main icon elements
+4. Transparent background with white fallback (#ffffff)
+5. Anti-aliased edges for crisp rendering
+6. Exported as PNG-24 with alpha channel
+7. Optimized using tools like ImageOptim or TinyPNG while maintaining quality
+
+The icon should follow the AUSTA Integration Platform Design System and maintain clear visibility across all usage contexts including PWA installation, app stores, and device home screens.
+
+Cache-Control: public, max-age=31536000
+Content-Type: image/png
+Purpose: maskable any
