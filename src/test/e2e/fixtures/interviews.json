@@ -1,0 +1,272 @@
+{
+  "interviews": [
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440000",
+      "enrollment_id": "550e8400-e29b-41d4-a716-446655440002",
+      "interviewer_id": "9c4238ec-93b4-4b36-ae28-90e9a6889999",
+      "status": "scheduled",
+      "scheduled_at": "2024-01-15T14:00:00Z",
+      "video_provider": "vonage",
+      "video_session_id": "session_2024011514_scheduled",
+      "session": {
+        "id": "session_2024011514_scheduled",
+        "sessionId": "2_MX40NzIxNDU2Mn5-MTU3MjIyMjcyNTU5NH5",
+        "connectionQuality": {
+          "status": "good",
+          "metrics": {
+            "bitrate": 2500,
+            "packetLoss": 0.1,
+            "latency": 50
+          }
+        },
+        "recording": {
+          "enabled": true,
+          "format": "mp4",
+          "retention": 90,
+          "consent": true
+        }
+      },
+      "participants": [
+        {
+          "id": "9c4238ec-93b4-4b36-ae28-90e9a6889999",
+          "role": "interviewer",
+          "name": "Dr. Maria Silva",
+          "connected": false,
+          "deviceInfo": {
+            "type": "desktop",
+            "browser": "chrome",
+            "os": "windows",
+            "version": "120.0.0"
+          },
+          "preferences": {
+            "language": "pt-BR",
+            "captionsEnabled": false,
+            "assistiveTechnology": false
+          }
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440002",
+          "role": "individual",
+          "name": "João Santos",
+          "connected": false,
+          "deviceInfo": {
+            "type": "mobile",
+            "browser": "safari",
+            "os": "ios",
+            "version": "17.1.2"
+          },
+          "preferences": {
+            "language": "pt-BR",
+            "captionsEnabled": true,
+            "assistiveTechnology": false
+          }
+        }
+      ],
+      "notes": {
+        "pre_interview": {
+          "device_check": true,
+          "consent_obtained": true,
+          "interpreter_required": false,
+          "language": "pt-BR"
+        },
+        "medical_notes": null
+      },
+      "audit_trail": [
+        {
+          "action": "INTERVIEW_SCHEDULED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6889999",
+          "timestamp": "2024-01-10T15:00:00Z",
+          "details": "Interview scheduled for 2024-01-15 14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440001",
+      "enrollment_id": "550e8400-e29b-41d4-a716-446655440003",
+      "interviewer_id": "9c4238ec-93b4-4b36-ae28-90e9a6888888",
+      "status": "in_progress",
+      "scheduled_at": "2024-01-15T15:00:00Z",
+      "video_provider": "vonage",
+      "video_session_id": "session_2024011515_active",
+      "session": {
+        "id": "session_2024011515_active",
+        "sessionId": "2_MX40NzIxNDU2Mn5-MTU3MjIyMjcyNTU5NH6",
+        "connectionQuality": {
+          "status": "fair",
+          "metrics": {
+            "bitrate": 1800,
+            "packetLoss": 2.5,
+            "latency": 150
+          }
+        },
+        "recording": {
+          "enabled": true,
+          "format": "mp4",
+          "retention": 90,
+          "consent": true
+        }
+      },
+      "participants": [
+        {
+          "id": "9c4238ec-93b4-4b36-ae28-90e9a6888888",
+          "role": "interviewer",
+          "name": "Dr. John Smith",
+          "connected": true,
+          "deviceInfo": {
+            "type": "desktop",
+            "browser": "firefox",
+            "os": "macos",
+            "version": "121.0.0"
+          },
+          "preferences": {
+            "language": "en",
+            "captionsEnabled": false,
+            "assistiveTechnology": false
+          }
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440003",
+          "role": "individual",
+          "name": "Sarah Johnson",
+          "connected": true,
+          "deviceInfo": {
+            "type": "desktop",
+            "browser": "chrome",
+            "os": "windows",
+            "version": "120.0.0"
+          },
+          "preferences": {
+            "language": "en",
+            "captionsEnabled": false,
+            "assistiveTechnology": true
+          }
+        }
+      ],
+      "notes": {
+        "pre_interview": {
+          "device_check": true,
+          "consent_obtained": true,
+          "interpreter_required": false,
+          "language": "en"
+        },
+        "medical_notes": {
+          "in_progress": true,
+          "last_updated": "2024-01-15T15:15:00Z"
+        }
+      },
+      "audit_trail": [
+        {
+          "action": "INTERVIEW_SCHEDULED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6888888",
+          "timestamp": "2024-01-10T16:00:00Z",
+          "details": "Interview scheduled for 2024-01-15 15:00:00Z"
+        },
+        {
+          "action": "INTERVIEW_STARTED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6888888",
+          "timestamp": "2024-01-15T15:00:00Z",
+          "details": "Interview session started"
+        }
+      ]
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440002",
+      "enrollment_id": "550e8400-e29b-41d4-a716-446655440004",
+      "interviewer_id": "9c4238ec-93b4-4b36-ae28-90e9a6887777",
+      "status": "completed",
+      "scheduled_at": "2024-01-15T13:00:00Z",
+      "completed_at": "2024-01-15T13:45:00Z",
+      "video_provider": "vonage",
+      "video_session_id": "session_2024011513_completed",
+      "session": {
+        "id": "session_2024011513_completed",
+        "sessionId": "2_MX40NzIxNDU2Mn5-MTU3MjIyMjcyNTU5NH7",
+        "connectionQuality": {
+          "status": "good",
+          "metrics": {
+            "bitrate": 2200,
+            "packetLoss": 0.5,
+            "latency": 80
+          }
+        },
+        "recording": {
+          "enabled": true,
+          "format": "mp4",
+          "retention": 90,
+          "consent": true,
+          "url": "https://storage.example.com/interviews/2024011513_completed.mp4"
+        }
+      },
+      "participants": [
+        {
+          "id": "9c4238ec-93b4-4b36-ae28-90e9a6887777",
+          "role": "interviewer",
+          "name": "Dra. Ana Oliveira",
+          "connected": false,
+          "deviceInfo": {
+            "type": "desktop",
+            "browser": "chrome",
+            "os": "windows",
+            "version": "120.0.0"
+          },
+          "preferences": {
+            "language": "pt-BR",
+            "captionsEnabled": false,
+            "assistiveTechnology": false
+          }
+        },
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440004",
+          "role": "individual",
+          "name": "Maria Pereira",
+          "connected": false,
+          "deviceInfo": {
+            "type": "tablet",
+            "browser": "safari",
+            "os": "ipados",
+            "version": "17.1.2"
+          },
+          "preferences": {
+            "language": "pt-BR",
+            "captionsEnabled": true,
+            "assistiveTechnology": false
+          }
+        }
+      ],
+      "notes": {
+        "pre_interview": {
+          "device_check": true,
+          "consent_obtained": true,
+          "interpreter_required": false,
+          "language": "pt-BR"
+        },
+        "medical_notes": {
+          "content": "Avaliação médica concluída com sucesso. Sem contraindicações identificadas.",
+          "content_en": "Medical evaluation completed successfully. No contraindications identified.",
+          "completed": true,
+          "last_updated": "2024-01-15T13:45:00Z"
+        }
+      },
+      "audit_trail": [
+        {
+          "action": "INTERVIEW_SCHEDULED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6887777",
+          "timestamp": "2024-01-10T14:00:00Z",
+          "details": "Interview scheduled for 2024-01-15 13:00:00Z"
+        },
+        {
+          "action": "INTERVIEW_STARTED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6887777",
+          "timestamp": "2024-01-15T13:00:00Z",
+          "details": "Interview session started"
+        },
+        {
+          "action": "INTERVIEW_COMPLETED",
+          "performer": "9c4238ec-93b4-4b36-ae28-90e9a6887777",
+          "timestamp": "2024-01-15T13:45:00Z",
+          "details": "Interview completed successfully"
+        }
+      ]
+    }
+  ]
+}
