@@ -1,0 +1,201 @@
+// Import core design system variables and mixins
+@use '../../../../assets/scss/variables' as vars;
+@use '../../../../assets/scss/mixins' as mix;
+
+// Header dimensions
+$header-height: 64px;
+$header-height-mobile: 56px;
+
+// =============================================================================
+// Header Component
+// =============================================================================
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: $header-height;
+  background: var(--surface-color, map-get(vars.$colors, surface, light));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  z-index: var(--z-index-fixed, 1000);
+  contain: layout size style;
+  will-change: transform;
+  
+  // Hardware acceleration for smooth scrolling
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background: var(--surface-color, map-get(vars.$colors, surface, dark));
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
+  }
+
+  // High contrast mode support
+  @media (forced-colors: active) {
+    border-bottom: 1px solid CanvasText;
+    box-shadow: none;
+  }
+}
+
+// =============================================================================
+// Header Container
+// =============================================================================
+
+.header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--container-max-width, 1440px);
+  margin: 0 auto;
+  padding-inline: var(--container-padding, map-get(vars.$spacing, scale, lg));
+  container-type: inline-size;
+  
+  // Print styles
+  @media print {
+    display: none;
+  }
+}
+
+// =============================================================================
+// Logo Section
+// =============================================================================
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  
+  img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    
+    // High-DPI optimization
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+  }
+
+  // Enhanced focus state
+  @include mix.focus-outline(map-get(vars.$colors, primary), 4px, true);
+}
+
+// =============================================================================
+// Navigation Section
+// =============================================================================
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: map-get(vars.$spacing, scale, md);
+  
+  // Hide on smaller screens
+  @media (max-width: map-get(vars.$breakpoints, sm)) {
+    display: none;
+  }
+}
+
+// =============================================================================
+// Actions Section
+// =============================================================================
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: map-get(vars.$spacing, scale, sm);
+  
+  button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-primary, map-get(vars.$colors, text, primary, light));
+    cursor: pointer;
+    isolation: isolate;
+    
+    // Enhanced focus state
+    @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+    
+    // Hover state
+    &:hover {
+      background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, hover));
+    }
+    
+    // Active state
+    &:active {
+      background-color: rgba(map-get(vars.$colors, primary), map-get(vars.$colors, opacity, selected));
+    }
+    
+    // Disabled state
+    &:disabled {
+      opacity: map-get(vars.$colors, opacity, disabled);
+      cursor: not-allowed;
+    }
+  }
+}
+
+// =============================================================================
+// Responsive Styles
+// =============================================================================
+
+// Mobile styles
+@media (max-width: map-get(vars.$breakpoints, sm)) {
+  .header {
+    height: $header-height-mobile;
+    
+    // Adjust height in landscape
+    @media (orientation: landscape) {
+      height: 48px;
+    }
+  }
+  
+  .header__container {
+    --container-padding: #{map-get(vars.$spacing, scale, md)};
+  }
+  
+  .header__logo {
+    height: 24px;
+  }
+}
+
+// Tablet styles
+@media (min-width: map-get(vars.$breakpoints, sm)) and (max-width: map-get(vars.$breakpoints, md)) {
+  .header__container {
+    --container-padding: #{map-get(vars.$spacing, scale, lg)};
+  }
+}
+
+// Desktop styles
+@media (min-width: map-get(vars.$breakpoints, md)) {
+  .header__container {
+    --container-padding: #{map-get(vars.$spacing, scale, xl)};
+    
+    // Container query for larger screens
+    @container (min-width: 1200px) {
+      --container-padding: #{map-get(vars.$spacing, scale, xxl)};
+    }
+  }
+}
+
+// =============================================================================
+// Reduced Motion Support
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    transition: none;
+  }
+  
+  .header__actions button {
+    transition: none;
+  }
+}
