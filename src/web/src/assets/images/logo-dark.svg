@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="160" height="40" viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+    <!-- Main Logo Container -->
+    <g id="austa-logo-dark">
+        <!-- Logo Symbol -->
+        <g id="symbol">
+            <!-- Circular Health Cross -->
+            <circle cx="20" cy="20" r="18" stroke="#E0E0E0" stroke-width="2"/>
+            <path d="M20 8v24M8 20h24" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round"/>
+            
+            <!-- Integration Connection Lines -->
+            <path d="M32 14l-24 12M32 26l-24-12" stroke="#2196F3" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+        </g>
+
+        <!-- Logo Text -->
+        <g id="text" fill="#E0E0E0">
+            <!-- AUSTA Text -->
+            <path d="M50 28l-6-16h4l4 12 4-12h4l-6 16h-4z"/>
+            <path d="M64 28v-16h4v16h-4z"/>
+            <path d="M72 28v-16h4l6 10v-10h4v16h-4l-6-10v10h-4z"/>
+            <path d="M90 28v-16h4v16h-4z"/>
+            <path d="M98 28v-16h4l6 10v-10h4v16h-4l-6-10v10h-4z"/>
+            
+            <!-- Integration Platform Text -->
+            <g font-family="Roboto, sans-serif" font-size="10" letter-spacing="0.2">
+                <text x="50" y="36" fill="#2196F3">INTEGRATION PLATFORM</text>
+            </g>
+        </g>
+    </g>
+
+    <!-- Responsive Design Support -->
+    <style>
+        @media (max-width: 768px) {
+            #austa-logo-dark { transform: scale(0.75); }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #austa-logo-dark { transform: scale(0.875); }
+        }
+    </style>
+
+    <!-- High Contrast Mode Support -->
+    <style>
+        @media (prefers-contrast: more) {
+            #symbol circle, #symbol path { stroke-width: 2.5; }
+            #text { fill: #FFFFFF; }
+        }
+    </style>
+</svg>
