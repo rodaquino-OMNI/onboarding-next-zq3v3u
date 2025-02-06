@@ -1,0 +1,113 @@
+// Import core design system variables and mixins
+@use '../../../assets/scss/_variables' as vars;
+@use '../../../assets/scss/_mixins' as mixins;
+
+// Spinner rotation animation
+@keyframes spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Full-screen loading overlay container
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: map-get(vars.$spacing, z-index-modal);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  // Accessibility enhancements
+  role: alert;
+  aria-live: polite;
+  
+  // Performance optimizations
+  will-change: opacity, transform;
+  @include mixins.fade-in(0.3s, ease-out);
+  
+  // Respect reduced motion preferences
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Material spinner component
+.loading-spinner {
+  margin-bottom: map-get(vars.$spacing, unit) * 2;
+  transform-origin: center center;
+  will-change: transform;
+  
+  // Spinner animation
+  animation: spinner-rotate 1.5s linear infinite;
+  
+  // Style the Material spinner circle
+  ::ng-deep {
+    circle {
+      stroke: map-get(vars.$colors, primary);
+      stroke-width: 3px;
+    }
+  }
+  
+  // Slower animation for reduced motion preference
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 3s;
+  }
+}
+
+// Loading message text
+.loading-message {
+  font-family: map-get(vars.$typography, font-family);
+  color: map-get(vars.$colors, text, primary, light);
+  font-size: 16px;
+  text-align: center;
+  margin-top: map-get(vars.$spacing, unit) * 2;
+  
+  // High contrast mode support
+  @media (forced-colors: active) {
+    color: CanvasText;
+  }
+  
+  // Extended loading state
+  &.extended {
+    color: darken(map-get(vars.$colors, text, primary, light), 15%);
+    font-weight: map-get(vars.$typography, weights, medium);
+  }
+  
+  // Error state
+  &.error {
+    color: map-get(vars.$colors, state, error);
+    font-weight: map-get(vars.$typography, weights, medium);
+  }
+}
+
+// Responsive styles
+@media screen and (max-width: map-get(vars.$breakpoints, sm)) {
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    margin-bottom: map-get(vars.$spacing, unit);
+  }
+  
+  .loading-message {
+    font-size: 14px;
+    margin-top: map-get(vars.$spacing, unit);
+  }
+}
+
+@media screen and (min-width: map-get(vars.$breakpoints, sm)) and (max-width: map-get(vars.$breakpoints, md)) {
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+    margin-bottom: map-get(vars.$spacing, unit) * 1.5;
+  }
+  
+  .loading-message {
+    font-size: 16px;
+    margin-top: map-get(vars.$spacing, unit) * 1.5;
+  }
+}
