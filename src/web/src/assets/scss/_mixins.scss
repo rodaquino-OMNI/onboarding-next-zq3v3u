@@ -1,0 +1,212 @@
+// Import core design system variables
+@use 'variables' as vars;
+
+// =============================================================================
+// Unit Conversion Functions
+// =============================================================================
+
+/// Convert pixels to em units
+/// @param {Number} $pixels - Value in pixels
+/// @param {Number} $context - Base context size in pixels
+/// @return {String} Value in em units
+@function em($pixels, $context: 16) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+  @return calc($pixels / $context) * 1em;
+}
+
+/// Convert pixels to rem units
+/// @param {Number} $pixels - Value in pixels
+/// @return {String} Value in rem units
+@function rem($pixels) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @return calc($pixels / 16px) * 1rem;
+}
+
+// =============================================================================
+// Responsive Breakpoint Mixins
+// =============================================================================
+
+/// Enhanced media query mixin with orientation and high-DPI support
+/// @param {String} $breakpoint - Breakpoint name from $breakpoints map
+/// @param {String} $orientation [null] - Optional orientation override
+/// @param {Boolean} $high-dpi [false] - Enable high-DPI media query
+@mixin responsive-breakpoint($breakpoint, $orientation: null, $high-dpi: false) {
+  $min-width: map-get(vars.$breakpoints, $breakpoint);
+  
+  @if $orientation {
+    $orientation-query: map-get(vars.$breakpoints, orientation, $orientation);
+    @media screen and (min-width: $min-width) and #{$orientation-query} {
+      @content;
+    }
+  } @else if $high-dpi {
+    $dpi-query: map-get(vars.$breakpoints, high-dpi, retina);
+    @media screen and (min-width: $min-width) and #{$dpi-query} {
+      @content;
+    }
+  } @else {
+    @media screen and (min-width: $min-width) {
+      @content;
+    }
+  }
+}
+
+// =============================================================================
+// Accessibility Mixins
+// =============================================================================
+
+/// WCAG AAA compliant focus state styling
+/// @param {Color} $color [#2196F3] - Focus outline color
+/// @param {Number} $offset [2px] - Outline offset
+/// @param {Boolean} $high-contrast [false] - High contrast mode support
+@mixin focus-outline($color: #2196F3, $offset: 2px, $high-contrast: false) {
+  &:focus {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+    
+    @if $high-contrast {
+      @media (forced-colors: active) {
+        outline: 3px solid CanvasText;
+      }
+    }
+  }
+  
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+    
+    @if $high-contrast {
+      @media (forced-colors: active) {
+        outline: 3px solid CanvasText;
+      }
+    }
+  }
+}
+
+/// Enhanced screen reader only content styling
+@mixin screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  
+  &:focus {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: auto;
+    height: auto;
+    padding: 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    background-color: map-get(vars.$colors, background, light);
+    color: map-get(vars.$colors, text, primary, light);
+    z-index: 9999;
+    
+    @media (prefers-color-scheme: dark) {
+      background-color: map-get(vars.$colors, background, dark);
+      color: map-get(vars.$colors, text, primary, dark);
+    }
+  }
+}
+
+// =============================================================================
+// Material Design Mixins
+// =============================================================================
+
+/// Material Design elevation shadows with dark mode support
+/// @param {Number} $level - Elevation level (1-4)
+/// @param {Boolean} $dark-mode [false] - Dark mode variant
+@mixin elevation($level, $dark-mode: false) {
+  @if $dark-mode {
+    $opacity: 0.3 + ($level * 0.05);
+    box-shadow: 0 #{$level * 2}px #{$level * 4}px rgba(0, 0, 0, $opacity);
+  } @else {
+    @if $level == 1 {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    } @else if $level == 2 {
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+    } @else if $level == 3 {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10);
+    } @else if $level == 4 {
+      box-shadow: 0 15px 25px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.05);
+    }
+  }
+}
+
+// =============================================================================
+// Layout Mixins
+// =============================================================================
+
+/// Container query support with fallbacks
+/// @param {String} $size - Container size breakpoint
+@mixin container-query($size) {
+  @supports (container-type: inline-size) {
+    @container (min-width: $size) {
+      @content;
+    }
+  }
+  
+  @supports not (container-type: inline-size) {
+    @include responsive-breakpoint($size) {
+      @content;
+    }
+  }
+}
+
+/// Flex layout helper with gap support
+/// @param {String} $direction [row] - Flex direction
+/// @param {String} $gap [map-get(vars.$spacing, xs)] - Gap between items
+@mixin flex-layout($direction: row, $gap: map-get(vars.$spacing, scale, xs)) {
+  display: flex;
+  flex-direction: $direction;
+  gap: $gap;
+}
+
+/// Grid layout helper with responsive columns
+/// @param {Number} $columns [1] - Number of columns
+/// @param {String} $gap [map-get(vars.$spacing, grid, column-gap)] - Gap between items
+@mixin grid-layout($columns: 1, $gap: map-get(vars.$spacing, grid, column-gap)) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// =============================================================================
+// Animation Mixins
+// =============================================================================
+
+/// Material Design transition preset
+/// @param {String} $properties [all] - Properties to transition
+@mixin material-transition($properties: all) {
+  transition: $properties 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/// Smooth appearance animation
+/// @param {Number} $duration [0.3s] - Animation duration
+/// @param {String} $timing [ease-in-out] - Timing function
+@mixin fade-in($duration: 0.3s, $timing: ease-in-out) {
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  animation: fadeIn $duration $timing;
+}
