@@ -1,0 +1,239 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "continue": "Continuar",
+      "back": "Voltar",
+      "upload": "Enviar",
+      "delete": "Excluir",
+      "edit": "Editar",
+      "submit": "Enviar",
+      "aria_labels": {
+        "save": "Salvar alterações",
+        "cancel": "Cancelar operação",
+        "continue": "Continuar para próxima etapa",
+        "back": "Voltar para etapa anterior",
+        "upload": "Enviar documento",
+        "delete": "Excluir item",
+        "edit": "Editar informações",
+        "submit": "Enviar formulário"
+      }
+    },
+    "labels": {
+      "name": "Nome completo",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "address": "Endereço",
+      "status": "Status",
+      "date": "Data",
+      "time": "Hora",
+      "cpf": "CPF",
+      "rg": "RG",
+      "sus_card": "Cartão SUS",
+      "birth_date": "Data de nascimento",
+      "gender": "Gênero",
+      "marital_status": "Estado civil",
+      "nationality": "Nacionalidade",
+      "occupation": "Profissão"
+    },
+    "navigation": {
+      "home": "Início",
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "help": "Ajuda",
+      "logout": "Sair"
+    },
+    "status": {
+      "pending": "Pendente",
+      "in_progress": "Em andamento",
+      "completed": "Concluído",
+      "rejected": "Rejeitado",
+      "approved": "Aprovado"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "email_placeholder": "Digite seu e-mail",
+      "password_placeholder": "Digite sua senha",
+      "forgot_password": "Esqueceu sua senha?",
+      "submit": "Entrar",
+      "errors": {
+        "invalid_credentials": "E-mail ou senha inválidos",
+        "account_locked": "Conta bloqueada"
+      }
+    },
+    "register": {
+      "title": "Criar conta",
+      "success": "Conta criada com sucesso",
+      "terms": "Ao criar uma conta, você concorda com nossos Termos de Uso"
+    },
+    "mfa": {
+      "title": "Autenticação em duas etapas",
+      "instructions": "Digite o código enviado para seu celular"
+    }
+  },
+  "enrollment": {
+    "steps": {
+      "personal_info": "Informações pessoais",
+      "documents": "Documentos",
+      "health_declaration": "Declaração de saúde",
+      "interview": "Entrevista médica",
+      "review": "Revisão",
+      "completion": "Conclusão"
+    },
+    "form": {
+      "title": "Formulário de inscrição",
+      "subtitle": "Preencha todos os campos obrigatórios",
+      "required_field": "Campo obrigatório",
+      "validation": {
+        "required": "Este campo é obrigatório",
+        "invalid_email": "E-mail inválido",
+        "invalid_cpf": "CPF inválido",
+        "invalid_phone": "Telefone inválido"
+      }
+    }
+  },
+  "documents": {
+    "upload": {
+      "title": "Upload de documentos",
+      "instructions": "Selecione os documentos necessários",
+      "supported_formats": "Formatos suportados: PDF, JPG, PNG",
+      "max_size": "Tamanho máximo: 10MB"
+    },
+    "types": {
+      "id": "Documento de identidade",
+      "cpf": "CPF",
+      "address_proof": "Comprovante de residência",
+      "health_card": "Cartão do plano de saúde"
+    },
+    "status": {
+      "pending": "Aguardando envio",
+      "processing": "Processando",
+      "verified": "Verificado",
+      "rejected": "Rejeitado"
+    }
+  },
+  "interview": {
+    "scheduling": {
+      "title": "Agendamento de entrevista",
+      "select_date": "Selecione uma data",
+      "select_time": "Selecione um horário",
+      "confirmation": "Confirmação de agendamento"
+    },
+    "video": {
+      "connecting": "Conectando...",
+      "connection_lost": "Conexão perdida",
+      "reconnecting": "Reconectando...",
+      "controls": {
+        "camera": "Câmera",
+        "microphone": "Microfone",
+        "screen_share": "Compartilhar tela",
+        "end_call": "Encerrar chamada"
+      }
+    }
+  },
+  "health": {
+    "declaration": {
+      "title": "Declaração de saúde",
+      "instructions": "Responda todas as perguntas com sinceridade",
+      "conditions": {
+        "diabetes": "Diabetes",
+        "hypertension": "Hipertensão",
+        "heart_disease": "Doença cardíaca",
+        "cancer": "Câncer",
+        "other": "Outras condições"
+      }
+    },
+    "medications": {
+      "title": "Medicamentos em uso",
+      "add": "Adicionar medicamento",
+      "fields": {
+        "name": "Nome do medicamento",
+        "dosage": "Dosagem",
+        "frequency": "Frequência"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Painel administrativo",
+      "metrics": {
+        "total_enrollments": "Total de inscrições",
+        "pending_reviews": "Revisões pendentes",
+        "completed_interviews": "Entrevistas realizadas"
+      }
+    },
+    "management": {
+      "users": "Gestão de usuários",
+      "roles": "Gestão de perfis",
+      "permissions": "Permissões"
+    }
+  },
+  "errors": {
+    "general": {
+      "title": "Erro",
+      "unknown": "Erro desconhecido",
+      "try_again": "Tente novamente",
+      "contact_support": "Entre em contato com o suporte"
+    },
+    "validation": {
+      "required": "Campo obrigatório",
+      "invalid_format": "Formato inválido",
+      "min_length": "Mínimo de {{min}} caracteres",
+      "max_length": "Máximo de {{max}} caracteres"
+    }
+  },
+  "accessibility": {
+    "screen_reader": {
+      "navigation": {
+        "main_menu": "Menu principal de navegação",
+        "skip_link": "Pular para o conteúdo principal",
+        "language_selector": "Seletor de idioma",
+        "user_menu": "Menu do usuário",
+        "notifications": "Notificações"
+      },
+      "forms": {
+        "required": "Campo obrigatório",
+        "error": "Erro no formulário",
+        "success": "Formulário enviado com sucesso",
+        "loading": "Carregando",
+        "select": "Selecione uma opção"
+      }
+    },
+    "aria_descriptions": {
+      "document_upload": "Área para upload de documentos. Aceita arquivos PDF e imagens",
+      "video_interview": "Interface de videoconferência para entrevista médica",
+      "health_form": "Formulário de declaração de saúde",
+      "calendar": "Calendário para seleção de data",
+      "time_picker": "Seletor de horário"
+    }
+  },
+  "privacy": {
+    "lgpd": {
+      "consent": {
+        "title": "Consentimento para Tratamento de Dados",
+        "description": "De acordo com a Lei Geral de Proteção de Dados (LGPD)",
+        "data_usage": "Seus dados serão utilizados exclusivamente para fins de atendimento médico",
+        "health_data": "Dados de saúde serão processados com segurança adicional",
+        "rights": "Seus direitos incluem acesso, correção e exclusão dos dados",
+        "acceptance": "Li e aceito os termos de consentimento",
+        "withdrawal": "Você pode retirar seu consentimento a qualquer momento"
+      },
+      "notices": {
+        "data_collection": "Coletamos apenas dados necessários para seu atendimento",
+        "data_storage": "Seus dados são armazenados de forma segura e criptografada",
+        "data_sharing": "Compartilhamento apenas com prestadores de serviços autorizados",
+        "data_retention": "Seus dados serão mantidos pelo período exigido por lei",
+        "data_protection": "Implementamos medidas técnicas e organizacionais para proteger seus dados"
+      }
+    },
+    "terms": {
+      "title": "Termos de Uso",
+      "privacy_policy": "Política de Privacidade",
+      "cookie_policy": "Política de Cookies",
+      "updates": "Atualizações dos termos"
+    }
+  }
+}
