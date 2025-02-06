@@ -1,0 +1,80 @@
+<div class="file-upload" role="region" [attr.aria-label]="'shared.fileUpload.title' | translate">
+  <!-- Main upload container with drag-drop and keyboard interaction support -->
+  <div class="upload-container"
+       [class.upload-container--dragging]="isDragging"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)"
+       (keydown.enter)="onFileSelected($event)"
+       (keydown.space)="onFileSelected($event)"
+       role="button"
+       tabindex="0"
+       [attr.aria-label]="'shared.fileUpload.dropzone' | translate">
+    
+    <!-- Upload icon and instructions -->
+    <div class="upload-content">
+      <mat-icon class="upload-icon" aria-hidden="true">cloud_upload</mat-icon>
+      <p class="upload-text">{{ 'shared.fileUpload.instructions' | translate }}</p>
+      <p class="upload-subtext">{{ 'shared.fileUpload.allowedTypes' | translate }}</p>
+    </div>
+
+    <!-- Hidden file input for native file selection -->
+    <input 
+      type="file"
+      #fileInput
+      [accept]="'.pdf,.jpg,.jpeg,.png'"
+      (change)="onFileSelected($event)"
+      class="visually-hidden"
+      aria-hidden="true">
+  </div>
+
+  <!-- Upload progress indicator -->
+  <div *ngIf="uploadProgress > 0" 
+       class="progress-container"
+       role="progressbar"
+       [attr.aria-valuenow]="uploadProgress"
+       [attr.aria-valuemin]="0"
+       [attr.aria-valuemax]="100"
+       [attr.aria-label]="'shared.fileUpload.uploadProgress' | translate">
+    <mat-progress-bar
+      mode="determinate"
+      [value]="uploadProgress"
+      class="upload-progress">
+    </mat-progress-bar>
+    <span class="progress-text">
+      {{ uploadProgress }}%
+    </span>
+  </div>
+
+  <!-- Error message display -->
+  <div *ngIf="errorMessage"
+       class="error-message"
+       role="alert"
+       aria-live="polite">
+    <mat-icon class="error-icon" aria-hidden="true">error</mat-icon>
+    <span>{{ 'shared.fileUpload.error' | translate }}: {{ errorMessage }}</span>
+  </div>
+
+  <!-- File type information -->
+  <div class="file-info" aria-hidden="true">
+    <mat-icon class="info-icon">info</mat-icon>
+    <span>{{ 'shared.fileUpload.supportedFormats' | translate }}</span>
+    <span class="file-types">PDF, JPG, PNG</span>
+    <span class="file-size">{{ 'shared.fileUpload.maxSize' | translate }}</span>
+  </div>
+
+  <!-- Accessibility enhancement: Screen reader only instructions -->
+  <span class="sr-only" aria-live="polite">
+    {{ 'shared.fileUpload.screenReaderInstructions' | translate }}
+  </span>
+
+  <!-- Cancel upload button -->
+  <button *ngIf="uploadProgress > 0"
+          mat-button
+          class="cancel-button"
+          (click)="cancelUpload()"
+          [attr.aria-label]="'shared.fileUpload.cancelUpload' | translate">
+    <mat-icon aria-hidden="true">cancel</mat-icon>
+    {{ 'shared.fileUpload.cancel' | translate }}
+  </button>
+</div>
