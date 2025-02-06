@@ -1,0 +1,140 @@
+// Import core design system variables and mixins
+@use '../../assets/scss/variables' as vars;
+@use '../../assets/scss/mixins' as mix;
+
+// Global constants
+$sidebar-width: 280px;
+$header-height: 64px;
+$mobile-breakpoint: 768px;
+$tablet-breakpoint: 1024px;
+$animation-duration: 0.3s;
+
+// Root container with theme support
+.app-container {
+  display: grid;
+  grid-template-rows: $header-height 1fr;
+  min-height: 100vh;
+  background-color: var(--background);
+  color-scheme: light dark;
+  container-type: inline-size;
+
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, background, dark);
+    color: map-get(vars.$colors, text, primary, dark);
+  }
+
+  // High contrast mode support
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+// Main container with sidebar and content
+.main-container {
+  display: grid;
+  grid-template-columns: $sidebar-width 1fr;
+  height: calc(100vh - #{$header-height});
+  transition: grid-template-columns $animation-duration ease;
+  container-type: inline-size;
+
+  // Responsive layout adjustments
+  @include mix.responsive-breakpoint('sm') {
+    grid-template-columns: 0 1fr; // Collapsed sidebar on mobile
+  }
+
+  // RTL support
+  [dir="rtl"] & {
+    grid-template-columns: 1fr $sidebar-width;
+
+    @include mix.responsive-breakpoint('sm') {
+      grid-template-columns: 1fr 0;
+    }
+  }
+}
+
+// Main content area
+.content-area {
+  padding: map-get(vars.$spacing, scale, md);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  content-visibility: auto;
+  contain: layout style paint;
+
+  // Responsive padding
+  @include mix.container-query('sm') {
+    padding: map-get(vars.$spacing, scale, sm);
+  }
+
+  @include mix.container-query('md') {
+    padding: map-get(vars.$spacing, scale, md);
+  }
+
+  @include mix.container-query('lg') {
+    padding: map-get(vars.$spacing, scale, lg);
+  }
+
+  // Focus outline for keyboard navigation
+  &:focus {
+    @include mix.focus-outline(
+      map-get(vars.$colors, primary),
+      map-get(vars.$spacing, scale, xs),
+      true
+    );
+  }
+
+  // Print styles
+  @media print {
+    overflow: visible;
+    height: auto;
+  }
+}
+
+// Accessibility enhancements
+.skip-link {
+  @include mix.screen-reader-only;
+}
+
+// Animation states
+.sidebar-enter-active,
+.sidebar-leave-active {
+  @include mix.material-transition(grid-template-columns);
+}
+
+.content-enter-active {
+  @include mix.fade-in;
+}
+
+// Theme color variables
+:root {
+  --background: #{map-get(vars.$colors, background, light)};
+  --text-primary: #{map-get(vars.$colors, text, primary, light)};
+  --text-secondary: #{map-get(vars.$colors, text, secondary, light)};
+  --surface: #{map-get(vars.$colors, surface, light)};
+  --primary: #{map-get(vars.$colors, primary)};
+  --secondary: #{map-get(vars.$colors, secondary)};
+
+  @media (prefers-color-scheme: dark) {
+    --background: #{map-get(vars.$colors, background, dark)};
+    --text-primary: #{map-get(vars.$colors, text, primary, dark)};
+    --text-secondary: #{map-get(vars.$colors, text, secondary, dark)};
+    --surface: #{map-get(vars.$colors, surface, dark)};
+  }
+}
+
+// Performance optimizations
+* {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
