@@ -1,0 +1,161 @@
+<!-- Main container with ARIA landmarks -->
+<div class="user-management-container" role="main" aria-labelledby="user-management-title">
+  <!-- Header section -->
+  <header class="user-management-header" role="banner">
+    <h1 id="user-management-title" class="mat-h1">{{ 'USER_MANAGEMENT.TITLE' | translate }}</h1>
+    <div class="header-actions">
+      <!-- Search input with accessibility -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>{{ 'USER_MANAGEMENT.SEARCH' | translate }}</mat-label>
+        <input matInput 
+               [placeholder]="'USER_MANAGEMENT.SEARCH_PLACEHOLDER' | translate"
+               [attr.aria-label]="'USER_MANAGEMENT.SEARCH' | translate"
+               (input)="searchTerm$.next($event.target.value)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Role filter -->
+      <mat-form-field appearance="outline" class="role-filter">
+        <mat-label>{{ 'USER_MANAGEMENT.FILTER_BY_ROLE' | translate }}</mat-label>
+        <mat-select [attr.aria-label]="'USER_MANAGEMENT.FILTER_BY_ROLE' | translate"
+                   (selectionChange)="selectedRole$.next($event.value)">
+          <mat-option [value]="null">{{ 'USER_MANAGEMENT.ALL_ROLES' | translate }}</mat-option>
+          <mat-option *ngFor="let role of userRoles | keyvalue" [value]="role.value">
+            {{ 'USER_MANAGEMENT.ROLES.' + role.value.toUpperCase() | translate }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </header>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading$ | async" class="loading-overlay" role="alert" aria-busy="true">
+    <mat-spinner diameter="48" aria-label="{{ 'USER_MANAGEMENT.LOADING' | translate }}"></mat-spinner>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error$ | async as error" class="error-message" role="alert">
+    <mat-icon color="warn">error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- User table with virtual scrolling -->
+  <cdk-virtual-scroll-viewport class="users-table-container" itemSize="56" role="grid"
+                              [attr.aria-label]="'USER_MANAGEMENT.USER_TABLE' | translate">
+    <table mat-table [dataSource]="users$ | async" class="users-table" aria-multiselectable="false">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          {{ 'USER_MANAGEMENT.COLUMNS.NAME' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.user.name }}</td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          {{ 'USER_MANAGEMENT.COLUMNS.EMAIL' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.user.email }}</td>
+      </ng-container>
+
+      <!-- Role Column -->
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          {{ 'USER_MANAGEMENT.COLUMNS.ROLE' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">
+          {{ 'USER_MANAGEMENT.ROLES.' + user.user.role.toUpperCase() | translate }}
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          {{ 'USER_MANAGEMENT.COLUMNS.STATUS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-icon [color]="user.user.emailVerifiedAt ? 'primary' : 'warn'"
+                   [attr.aria-label]="user.user.emailVerifiedAt ? 'USER_MANAGEMENT.VERIFIED' : 'USER_MANAGEMENT.UNVERIFIED' | translate">
+            {{ user.user.emailVerifiedAt ? 'check_circle' : 'warning' }}
+          </mat-icon>
+          {{ user.user.emailVerifiedAt ? 'USER_MANAGEMENT.VERIFIED' : 'USER_MANAGEMENT.UNVERIFIED' | translate }}
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          {{ 'USER_MANAGEMENT.COLUMNS.ACTIONS' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-icon-button
+                  [attr.aria-label]="'USER_MANAGEMENT.EDIT_USER' | translate"
+                  (click)="user.isEditing = !user.isEditing">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button
+                  [attr.aria-label]="'USER_MANAGEMENT.VIEW_AUDIT' | translate"
+                  (click)="viewAuditLog(user)">
+            <mat-icon>history</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['name', 'email', 'role', 'status', 'actions']"></tr>
+      <tr mat-row *matRowDef="let user; columns: ['name', 'email', 'role', 'status', 'actions'];"
+          [class.editing]="user.isEditing"
+          [attr.aria-selected]="user.isEditing"></tr>
+    </table>
+  </cdk-virtual-scroll-viewport>
+
+  <!-- User edit form -->
+  <form *ngIf="(users$ | async)?.find(u => u.isEditing)" 
+        [formGroup]="userForm"
+        (ngSubmit)="updateUser()"
+        class="user-edit-form"
+        role="form"
+        aria-labelledby="edit-form-title">
+    <h2 id="edit-form-title" class="mat-h2">
+      {{ 'USER_MANAGEMENT.EDIT_USER_FORM' | translate }}
+    </h2>
+
+    <!-- Name field -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'USER_MANAGEMENT.FORM.NAME' | translate }}</mat-label>
+      <input matInput formControlName="name" required
+             [placeholder]="'USER_MANAGEMENT.FORM.NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="userForm.get('name')?.errors?.required">
+        {{ 'USER_MANAGEMENT.FORM.NAME_REQUIRED' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Role field -->
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'USER_MANAGEMENT.FORM.ROLE' | translate }}</mat-label>
+      <mat-select formControlName="role" required>
+        <mat-option *ngFor="let role of userRoles | keyvalue" [value]="role.value">
+          {{ 'USER_MANAGEMENT.ROLES.' + role.value.toUpperCase() | translate }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="userForm.get('role')?.errors?.required">
+        {{ 'USER_MANAGEMENT.FORM.ROLE_REQUIRED' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Form actions -->
+    <div class="form-actions">
+      <button mat-button type="button"
+              (click)="cancelEdit()"
+              [attr.aria-label]="'USER_MANAGEMENT.FORM.CANCEL' | translate">
+        {{ 'USER_MANAGEMENT.FORM.CANCEL' | translate }}
+      </button>
+      <button mat-raised-button color="primary"
+              type="submit"
+              [disabled]="userForm.invalid || (loading$ | async)"
+              [attr.aria-label]="'USER_MANAGEMENT.FORM.SAVE' | translate">
+        {{ 'USER_MANAGEMENT.FORM.SAVE' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
