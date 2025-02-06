@@ -1,0 +1,190 @@
+version: '3.8'
+
+services:
+  test-runner:
+    image: node:16.20-alpine
+    container_name: austa_test_runner
+    volumes:
+      - ../:/app:ro
+      - test-coverage:/app/coverage
+      - test-reports:/app/reports
+    working_dir: /app/test
+    environment:
+      - NODE_ENV=test
+      - TEST_DB_HOST=mysql-test
+      - TEST_REDIS_HOST=redis-test
+      - TEST_API_URL=http://api-test:80
+      - JEST_JUNIT_OUTPUT_DIR=/app/coverage
+      - COVERAGE_THRESHOLD=80
+      - PHP_IDE_CONFIG=serverName=docker
+    depends_on:
+      mysql-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+      api-test:
+        condition: service_started
+    networks:
+      - test-network
+    command: ["npm", "run", "test:ci"]
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '2G'
+    healthcheck:
+      test: ["CMD", "node", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=100M,noexec,nosuid
+
+  api-test:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: test
+      args:
+        COMPOSER_AUTH: ${COMPOSER_AUTH}
+    container_name: austa_api_test
+    volumes:
+      - ../backend:/var/www/html:ro
+      - test-coverage:/var/www/html/coverage
+    environment:
+      - APP_ENV=testing
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql-test
+      - DB_DATABASE=austa_test
+      - DB_USERNAME=test_user
+      - DB_PASSWORD_FILE=/run/secrets/test_db_password
+      - REDIS_HOST=redis-test
+      - APP_KEY=${APP_KEY}
+      - LOG_CHANNEL=stderr
+      - XDEBUG_MODE=coverage
+    depends_on:
+      mysql-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    networks:
+      - test-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1G'
+    healthcheck:
+      test: ["CMD", "php", "artisan", "health:check"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=100M,noexec,nosuid
+
+  mysql-test:
+    image: mysql:8.0.33
+    container_name: austa_mysql_test
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=austa_test
+      - MYSQL_USER_FILE=/run/secrets/test_db_user
+      - MYSQL_PASSWORD_FILE=/run/secrets/test_db_password
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/test_db_root_password
+    volumes:
+      - mysql-test-data:/var/lib/mysql:rw
+      - ../backend/docker/mysql/conf.d:/etc/mysql/conf.d:ro
+    networks:
+      - test-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "--password=$$MYSQL_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  redis-test:
+    image: redis:6.0.20-alpine
+    container_name: austa_redis_test
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    networks:
+      - test-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  zaproxy:
+    image: owasp/zap2docker-stable:2.12.0
+    container_name: austa_zap_test
+    command: zap-baseline.py -t http://api-test:80 -c zap.conf
+    volumes:
+      - test-reports:/zap/reports:rw
+    depends_on:
+      - api-test
+    networks:
+      - test-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  test-network:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+    driver_opts:
+      encrypt: "true"
+
+volumes:
+  mysql-test-data:
+    driver: local
+  test-coverage:
+    driver: local
+  test-reports:
+    driver: local
+
+secrets:
+  test_db_user:
+    file: ./secrets/test_db_user.txt
+  test_db_password:
+    file: ./secrets/test_db_password.txt
+  test_db_root_password:
+    file: ./secrets/test_db_root_password.txt
