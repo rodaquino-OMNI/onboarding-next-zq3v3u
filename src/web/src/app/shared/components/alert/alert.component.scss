@@ -1,0 +1,180 @@
+// Import core design system variables and mixins
+@use '../../../assets/scss/variables' as vars;
+@use '../../../assets/scss/mixins' as mix;
+
+// Alert Theme Variables
+$alert-types: (
+  success: var(--success-color, map-get(vars.$colors, state, success)),
+  error: var(--error-color, map-get(vars.$colors, state, error)),
+  warning: var(--warning-color, map-get(vars.$colors, state, warning)),
+  info: var(--info-color, map-get(vars.$colors, state, info))
+);
+
+$alert-dimensions: (
+  min-width: clamp(280px, 100%, 600px),
+  max-width: 100%,
+  padding: map-get(vars.$spacing, scale, md)
+);
+
+// Base Alert Styles
+.alert {
+  @include mix.flex-layout(row, map-get(vars.$spacing, scale, sm));
+  position: relative;
+  width: 100%;
+  min-width: map-get($alert-dimensions, min-width);
+  max-width: map-get($alert-dimensions, max-width);
+  padding: map-get($alert-dimensions, padding);
+  margin-block: map-get(vars.$spacing, scale, sm);
+  border-radius: 4px;
+  container-type: inline-size;
+
+  // Enhanced focus states for accessibility
+  @include mix.focus-outline(
+    map-get(vars.$colors, primary),
+    4px,
+    true
+  );
+
+  // Base transitions
+  @include mix.material-transition(
+    (transform, opacity, background-color, border-color)
+  );
+
+  // Alert Types
+  @each $type, $color in $alert-types {
+    &--#{$type} {
+      background-color: rgba($color, 0.1);
+      border: 1px solid $color;
+      color: var(--alert-#{$type}-text, $color);
+
+      .alert__icon {
+        color: $color;
+      }
+
+      // High Contrast Mode Support
+      @media (forced-colors: active) {
+        border: 2px solid CanvasText;
+        background-color: Canvas;
+        color: CanvasText;
+      }
+    }
+  }
+}
+
+// Alert Content
+.alert__content {
+  flex: 1;
+  font-family: map-get(vars.$typography, font-family);
+  font-size: rem(14);
+  line-height: map-get(vars.$typography, line-heights, body);
+
+  // RTL Support
+  [dir="rtl"] & {
+    text-align: right;
+  }
+}
+
+// Alert Icon
+.alert__icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-inline-end: map-get(vars.$spacing, scale, xs);
+
+  // Reduced Motion Support
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Alert Close Button
+.alert__close {
+  @include mix.flex-layout(row, 0);
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-inline-start: map-get(vars.$spacing, scale, xs);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  // Enhanced focus states
+  @include mix.focus-outline(
+    map-get(vars.$colors, primary),
+    2px,
+    true
+  );
+
+  // Screen reader text
+  span {
+    @include mix.screen-reader-only;
+  }
+}
+
+// Responsive Container Queries
+@include mix.container-query(map-get(vars.$breakpoints, sm)) {
+  .alert {
+    padding: map-get(vars.$spacing, scale, lg);
+
+    &__content {
+      font-size: rem(16);
+    }
+  }
+}
+
+// Animation States
+.alert-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.alert-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.alert-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.alert-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  .alert {
+    @each $type, $color in $alert-types {
+      &--#{$type} {
+        background-color: rgba($color, 0.15);
+        border-color: rgba($color, 0.3);
+      }
+    }
+  }
+}
+
+// Print Styles
+@media print {
+  .alert {
+    border: 1px solid #000;
+    background: none !important;
+    color: #000 !important;
+
+    &__close {
+      display: none;
+    }
+  }
+}
