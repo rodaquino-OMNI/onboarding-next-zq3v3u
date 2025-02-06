@@ -1,0 +1,68 @@
+<div class="modal-container"
+     role="dialog"
+     aria-labelledby="modal-title"
+     aria-describedby="modal-description"
+     aria-modal="true"
+     cdkTrapFocus
+     cdkTrapFocusAutoCapture>
+
+  <!-- Modal Header -->
+  <div class="modal-header" mat-dialog-title>
+    <h2 id="modal-title" class="modal-title">{{title}}</h2>
+    <button mat-icon-button
+            class="close-button"
+            type="button"
+            (click)="close()"
+            aria-label="Close modal">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Modal Content -->
+  <div class="modal-content"
+       mat-dialog-content
+       id="modal-description">
+    <!-- Loading State -->
+    <app-loading *ngIf="loading"
+                 [message]="loadingMessage"
+                 [isVisible]="loading">
+    </app-loading>
+
+    <!-- Modal Content -->
+    <div class="content-wrapper" [class.hidden]="loading">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <!-- Modal Actions -->
+  <div class="modal-actions" mat-dialog-actions>
+    <!-- Cancel Button -->
+    <button mat-button
+            class="cancel-button"
+            type="button"
+            *ngIf="showCancelButton"
+            [disabled]="loading || disabled"
+            (click)="cancel()"
+            [attr.aria-label]="cancelButtonLabel">
+      {{cancelButtonText}}
+    </button>
+
+    <!-- Confirm Button -->
+    <button mat-raised-button
+            class="confirm-button"
+            type="submit"
+            color="primary"
+            *ngIf="showConfirmButton"
+            [disabled]="loading || disabled"
+            (click)="confirm()"
+            [attr.aria-label]="confirmButtonLabel">
+      {{confirmButtonText}}
+    </button>
+  </div>
+</div>
+
+<!-- Backdrop click blocker for loading state -->
+<div *ngIf="loading"
+     class="modal-backdrop"
+     aria-hidden="true">
+</div>
