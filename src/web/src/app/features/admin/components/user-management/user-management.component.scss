@@ -1,0 +1,182 @@
+@use '../../../../assets/scss/_variables' as vars;
+
+// =============================================================================
+// User Management Component Styles
+// =============================================================================
+
+.user-management-container {
+  padding: map-get(vars.$spacing, 'scale', 'lg');
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background-color: map-get(vars.$colors, 'background', 'light');
+  color: map-get(vars.$colors, 'text', 'primary', 'light');
+
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, 'background', 'dark');
+    color: map-get(vars.$colors, 'text', 'primary', 'dark');
+  }
+}
+
+.user-table-section {
+  margin-bottom: map-get(vars.$spacing, 'scale', 'xl');
+  overflow-x: auto;
+  position: relative;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: map-get(vars.$colors, 'surface', 'light');
+
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, 'surface', 'dark');
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.user-form-section {
+  padding: map-get(vars.$spacing, 'scale', 'lg');
+  border-radius: 4px;
+  margin-top: map-get(vars.$spacing, 'scale', 'md');
+  background-color: map-get(vars.$colors, 'surface', 'light');
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, 'surface', 'dark');
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Material Table Styles
+.mat-mdc-table {
+  width: 100%;
+  min-width: 768px;
+  border-collapse: collapse;
+  
+  .mat-mdc-header-row {
+    background-color: rgba(map-get(vars.$colors, 'primary'), 0.05);
+    
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(map-get(vars.$colors, 'primary'), 0.15);
+    }
+  }
+}
+
+.mat-mdc-row {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid map-get(vars.$colors, 'text', 'secondary', 'light');
+
+  @media (prefers-color-scheme: dark) {
+    border-bottom-color: map-get(vars.$colors, 'text', 'secondary', 'dark');
+  }
+
+  &:hover {
+    background-color: rgba(map-get(vars.$colors, 'primary'), map-get(vars.$colors, 'opacity', 'hover'));
+  }
+
+  &:focus-within {
+    background-color: rgba(map-get(vars.$colors, 'primary'), map-get(vars.$colors, 'opacity', 'focus'));
+    outline: 2px solid map-get(vars.$colors, 'primary');
+    outline-offset: -2px;
+  }
+}
+
+// Form Field Styles
+.mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: map-get(vars.$spacing, 'scale', 'md');
+
+  &.mat-focused {
+    .mat-form-field-outline {
+      color: map-get(vars.$colors, 'primary');
+    }
+  }
+}
+
+// Action Buttons
+.action-button {
+  margin: 0 map-get(vars.$spacing, 'scale', 'xs');
+  min-width: 100px;
+
+  &--primary {
+    background-color: map-get(vars.$colors, 'primary');
+    color: #ffffff;
+  }
+
+  &--warning {
+    background-color: map-get(vars.$colors, 'state', 'warning');
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  &--danger {
+    background-color: map-get(vars.$colors, 'state', 'error');
+    color: #ffffff;
+  }
+}
+
+// Responsive Breakpoints
+@media screen and (max-width: map-get(vars.$breakpoints, 'sm')) {
+  .user-management-container {
+    padding: map-get(vars.$spacing, 'scale', 'md');
+  }
+
+  .user-form-section {
+    padding: map-get(vars.$spacing, 'scale', 'md');
+  }
+
+  .mat-mdc-table {
+    min-width: 600px;
+  }
+
+  .action-button {
+    min-width: 80px;
+    padding: map-get(vars.$spacing, 'scale', 'xs') map-get(vars.$spacing, 'scale', 'sm');
+  }
+}
+
+@media screen and (min-width: map-get(vars.$breakpoints, 'md')) {
+  .user-management-container {
+    padding: map-get(vars.$spacing, 'scale', 'xl');
+  }
+
+  .user-table-section {
+    margin-bottom: map-get(vars.$spacing, 'scale', 'xxl');
+  }
+}
+
+// Accessibility Enhancements
+@media (prefers-reduced-motion: reduce) {
+  .mat-mdc-row {
+    transition: none;
+  }
+}
+
+// High Contrast Mode Support
+@media screen and (-ms-high-contrast: active) {
+  .mat-mdc-row:hover,
+  .mat-mdc-row:focus-within {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+
+  .action-button {
+    border: 1px solid currentColor;
+  }
+}
+
+// Print Styles
+@media print {
+  .user-management-container {
+    padding: 0;
+    background: none;
+  }
+
+  .user-table-section,
+  .user-form-section {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .action-button {
+    display: none;
+  }
+}
