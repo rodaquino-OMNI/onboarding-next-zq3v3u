@@ -1,0 +1,158 @@
+// Import core design system variables and mixins
+@use '../../../../assets/scss/variables' as vars;
+@use '../../../../assets/scss/mixins' as mix;
+
+// =============================================================================
+// Modal Overlay
+// =============================================================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: map-get(vars.$z-index, modal);
+  backdrop-filter: blur(4px);
+  @include mix.fade-in(0.2s);
+
+  // Respect reduced motion preferences
+  @media (prefers-reduced-motion: reduce) {
+    backdrop-filter: none;
+    animation: none;
+  }
+
+  // Remove background in print mode
+  @media print {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
+}
+
+// =============================================================================
+// Modal Container
+// =============================================================================
+
+.modal-container {
+  background-color: map-get(vars.$colors, background, light);
+  border-radius: map-get(vars.$spacing, scale, xs);
+  @include mix.elevation(3);
+  padding: calc(map-get(vars.$spacing, scale, lg));
+  width: 90%;
+  max-width: 600px;
+  max-height: calc(var(--vh, 1vh) * 90);
+  overflow-y: auto;
+  position: relative;
+  @include mix.material-transition(transform);
+
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background-color: map-get(vars.$colors, background, dark);
+    @include mix.elevation(3, true);
+  }
+
+  // Mobile layout adjustments
+  @include mix.responsive-breakpoint(xs) {
+    width: 100%;
+    max-width: none;
+    border-radius: map-get(vars.$spacing, scale, xs) map-get(vars.$spacing, scale, xs) 0 0;
+    padding: calc(map-get(vars.$spacing, scale, md));
+  }
+
+  // Landscape mode adjustments
+  @include mix.responsive-breakpoint(xs, landscape) {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+// =============================================================================
+// Modal Header
+// =============================================================================
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: map-get(vars.$spacing, scale, md);
+
+  h2 {
+    margin: 0;
+    font-size: rem(20);
+    font-weight: map-get(vars.$typography, weights, medium);
+    color: map-get(vars.$colors, text, primary, light);
+
+    @media (prefers-color-scheme: dark) {
+      color: map-get(vars.$colors, text, primary, dark);
+    }
+  }
+
+  button {
+    @include mix.focus-outline(map-get(vars.$colors, primary), 2px, true);
+    padding: map-get(vars.$spacing, scale, xs);
+    margin: calc(map-get(vars.$spacing, scale, xs) * -1);
+    border-radius: 50%;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, map-get(vars.$colors, opacity, hover));
+    }
+  }
+}
+
+// =============================================================================
+// Modal Content
+// =============================================================================
+
+.modal-content {
+  position: relative;
+  overflow-y: auto;
+  max-height: calc(var(--vh, 1vh) * 90 - 160px);
+
+  // Scrollbar styling
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+
+    @media (prefers-color-scheme: dark) {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// =============================================================================
+// Modal Footer
+// =============================================================================
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: map-get(vars.$spacing, scale, md);
+  margin-top: map-get(vars.$spacing, scale, lg);
+
+  // Stack buttons on mobile
+  @include mix.responsive-breakpoint(xs) {
+    flex-direction: column;
+    gap: map-get(vars.$spacing, scale, xs);
+  }
+
+  button {
+    min-width: 120px;
+
+    // Full width buttons on mobile
+    @include mix.responsive-breakpoint(xs) {
+      width: 100%;
+    }
+  }
+}
