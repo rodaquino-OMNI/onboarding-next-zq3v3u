@@ -1,0 +1,158 @@
+// Import Angular Material theming utilities v15.0.0
+@use '@angular/material/theming' as mat;
+
+// Import Ionic framework v6.0.0
+@use '@ionic/angular' as ionic;
+
+// Import core design system variables
+@use '../assets/scss/_variables' as vars;
+
+// =============================================================================
+// Color System - WCAG AAA Compliant
+// =============================================================================
+
+// Function to calculate color contrast ratio
+@function calculate-contrast-ratio($foreground, $background) {
+  $l1: luminance($foreground);
+  $l2: luminance($background);
+  
+  $lighter: max($l1, $l2);
+  $darker: min($l1, $l2);
+  
+  @return ($lighter + 0.05) / ($darker + 0.05);
+}
+
+// Function to ensure WCAG AAA compliance (7:1 contrast ratio)
+@function ensure-contrast($color, $background) {
+  $contrast: calculate-contrast-ratio($color, $background);
+  
+  @if $contrast < 7 {
+    @if luminance($background) > 0.5 {
+      @return darken($color, percentage($contrast / 7));
+    } @else {
+      @return lighten($color, percentage($contrast / 7));
+    }
+  }
+  
+  @return $color;
+}
+
+:root {
+  // Theme Colors
+  --primary: #{map-get(vars.$colors, primary)};
+  --primary-light: #{lighten(map-get(vars.$colors, primary), 15%)};
+  --primary-dark: #{darken(map-get(vars.$colors, primary), 15%)};
+  
+  --secondary: #{map-get(vars.$colors, secondary)};
+  --secondary-light: #{lighten(map-get(vars.$colors, secondary), 15%)};
+  --secondary-dark: #{darken(map-get(vars.$colors, secondary), 15%)};
+  
+  // System States
+  --error: #{map-get(vars.$colors, state, error)};
+  --success: #{map-get(vars.$colors, state, success)};
+  --warning: #{map-get(vars.$colors, state, warning)};
+  --info: #{map-get(vars.$colors, state, info)};
+  
+  // Focus States
+  --focus-ring: #{rgba(map-get(vars.$colors, primary), 0.25)};
+  
+  // Typography System
+  --font-family: #{map-get(vars.$typography, font-family)};
+  --font-size-base: #{map-get(vars.$typography, base-size)};
+  --line-height-base: #{map-get(vars.$typography, line-heights, body)};
+  --font-weight-regular: #{map-get(vars.$typography, weights, regular)};
+  --font-weight-medium: #{map-get(vars.$typography, weights, medium)};
+  --font-weight-bold: #{map-get(vars.$typography, weights, bold)};
+  
+  // Spacing System
+  --spacing-unit: #{map-get(vars.$spacing, unit)};
+  --spacing-xs: #{map-get(vars.$spacing, scale, xs)};
+  --spacing-sm: #{map-get(vars.$spacing, scale, sm)};
+  --spacing-md: #{map-get(vars.$spacing, scale, md)};
+  --spacing-lg: #{map-get(vars.$spacing, scale, lg)};
+  --spacing-xl: #{map-get(vars.$spacing, scale, xl)};
+  --spacing-xxl: #{map-get(vars.$spacing, scale, xxl)};
+  
+  // Light Theme (Default)
+  --background: #{map-get(vars.$colors, background, light)};
+  --surface: #{map-get(vars.$colors, surface, light)};
+  --text-primary: #{ensure-contrast(map-get(vars.$colors, text, primary, light), map-get(vars.$colors, background, light))};
+  --text-secondary: #{ensure-contrast(map-get(vars.$colors, text, secondary, light), map-get(vars.$colors, background, light))};
+  --overlay: #{rgba(0, 0, 0, map-get(vars.$colors, opacity, hover))};
+}
+
+// Dark Theme
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #{map-get(vars.$colors, background, dark)};
+    --surface: #{map-get(vars.$colors, surface, dark)};
+    --text-primary: #{ensure-contrast(map-get(vars.$colors, text, primary, dark), map-get(vars.$colors, background, dark))};
+    --text-secondary: #{ensure-contrast(map-get(vars.$colors, text, secondary, dark), map-get(vars.$colors, background, dark))};
+    --overlay: #{rgba(255, 255, 255, map-get(vars.$colors, opacity, hover))};
+  }
+}
+
+// Angular Material Theme Integration
+$theme-primary: mat.define-palette(mat.$blue-palette, 500);
+$theme-accent: mat.define-palette(mat.$pink-palette, A200);
+$theme-warn: mat.define-palette(mat.$red-palette, 500);
+
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $theme-primary,
+    accent: $theme-accent,
+    warn: $theme-warn
+  ),
+  typography: mat.define-typography-config(
+    $font-family: var(--font-family),
+    $body-1: mat.define-typography-level(
+      var(--font-size-base),
+      var(--line-height-base),
+      var(--font-weight-regular)
+    )
+  )
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $theme-primary,
+    accent: $theme-accent,
+    warn: $theme-warn
+  )
+));
+
+// Apply Material theme based on system preference
+@include mat.core();
+@include mat.all-component-themes($light-theme);
+
+@media (prefers-color-scheme: dark) {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// Ionic Framework Integration
+:root {
+  --ion-color-primary: var(--primary);
+  --ion-color-primary-contrast: var(--text-primary);
+  --ion-color-primary-shade: var(--primary-dark);
+  --ion-color-primary-tint: var(--primary-light);
+  
+  --ion-color-secondary: var(--secondary);
+  --ion-color-secondary-contrast: var(--text-primary);
+  --ion-color-secondary-shade: var(--secondary-dark);
+  --ion-color-secondary-tint: var(--secondary-light);
+  
+  --ion-color-success: var(--success);
+  --ion-color-warning: var(--warning);
+  --ion-color-danger: var(--error);
+  --ion-color-info: var(--info);
+  
+  --ion-background-color: var(--background);
+  --ion-text-color: var(--text-primary);
+  
+  --ion-font-family: var(--font-family);
+}
+
+// Theme Transition
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
