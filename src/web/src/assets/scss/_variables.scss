@@ -1,0 +1,165 @@
+// @angular/material/theming v15.0.0
+@use '@angular/material/theming' as mat;
+
+// @ionic/angular v6.0.0
+@use '@ionic/angular' as ionic;
+
+// =============================================================================
+// Color System
+// =============================================================================
+
+// Base Colors
+$colors: (
+  primary: #2196F3,
+  secondary: #FF4081,
+  background: (
+    light: #FFFFFF,
+    dark: #121212
+  ),
+  surface: (
+    light: #F5F5F5,
+    dark: #1E1E1E
+  ),
+  text: (
+    primary: (
+      light: rgba(0, 0, 0, 0.87),
+      dark: rgba(255, 255, 255, 0.87)
+    ),
+    secondary: (
+      light: rgba(0, 0, 0, 0.54),
+      dark: rgba(255, 255, 255, 0.60)
+    )
+  ),
+  state: (
+    success: #4CAF50,
+    warning: #FFC107,
+    error: #F44336,
+    info: #2196F3
+  ),
+  opacity: (
+    hover: 0.08,
+    focus: 0.12,
+    selected: 0.16,
+    disabled: 0.38
+  )
+);
+
+// =============================================================================
+// Typography System
+// =============================================================================
+
+$typography: (
+  font-family: 'Roboto, sans-serif',
+  base-size: 16px,
+  scale-ratio: 1.25,
+  line-heights: (
+    body: 1.5,
+    heading: 1.2,
+    code: 1.7
+  ),
+  letter-spacing: (
+    tight: -0.02em,
+    normal: 0,
+    wide: 0.05em
+  ),
+  weights: (
+    regular: 400,
+    medium: 500,
+    bold: 700
+  ),
+  responsive-scale: (
+    sm: 0.875,
+    md: 1,
+    lg: 1.125
+  )
+);
+
+// =============================================================================
+// Spacing System
+// =============================================================================
+
+$spacing: (
+  unit: 8px,
+  scale: (
+    xs: 8px,
+    sm: 16px,
+    md: 24px,
+    lg: 32px,
+    xl: 48px,
+    xxl: 64px
+  ),
+  negative: (
+    xs: -8px,
+    sm: -16px,
+    md: -24px
+  ),
+  component: (
+    card-padding: 16px,
+    dialog-margin: 24px,
+    input-padding: 12px
+  ),
+  grid: (
+    gutter: 24px,
+    margin: 16px,
+    column-gap: 32px
+  )
+);
+
+// =============================================================================
+// Breakpoint System
+// =============================================================================
+
+$breakpoints: (
+  xs: 320px,
+  sm: 768px,
+  md: 1024px,
+  lg: 1440px,
+  xl: 1920px,
+  orientation: (
+    portrait: '(orientation: portrait)',
+    landscape: '(orientation: landscape)'
+  ),
+  high-dpi: (
+    retina: '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)',
+    ultra: '(-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi)'
+  ),
+  print: 'print'
+);
+
+// =============================================================================
+// Material Theme Integration
+// =============================================================================
+
+$mat-primary: mat.define-palette(mat.$blue-palette, 500);
+$mat-accent: mat.define-palette(mat.$pink-palette, A200);
+$mat-warn: mat.define-palette(mat.$red-palette, 500);
+
+// =============================================================================
+// Ionic Theme Integration
+// =============================================================================
+
+:root {
+  --ion-color-primary: #{map-get($colors, primary)};
+  --ion-color-secondary: #{map-get($colors, secondary)};
+  --ion-color-success: #{map-get($colors, state, success)};
+  --ion-color-warning: #{map-get($colors, state, warning)};
+  --ion-color-danger: #{map-get($colors, state, error)};
+  --ion-color-medium: #{map-get($colors, text, secondary, light)};
+  
+  @media (prefers-color-scheme: dark) {
+    --ion-background-color: #{map-get($colors, background, dark)};
+    --ion-text-color: #{map-get($colors, text, primary, dark)};
+    --ion-color-medium: #{map-get($colors, text, secondary, dark)};
+  }
+}
+
+// =============================================================================
+// Export Maps
+// =============================================================================
+
+:export {
+  colors: $colors;
+  typography: $typography;
+  spacing: $spacing;
+  breakpoints: $breakpoints;
+}
