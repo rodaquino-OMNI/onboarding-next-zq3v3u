@@ -1,0 +1,164 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly at midnight on Sunday
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  pull-requests: write
+
+env:
+  OSSINDEX_API_TOKEN: ${{ secrets.OSSINDEX_API_TOKEN }}
+  NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+  ZAPPROXY_TOKEN: ${{ secrets.ZAPPROXY_TOKEN }}
+
+jobs:
+  dependency-check:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, json, tokenizer
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist
+          npm ci
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@v2.6.0
+        with:
+          project: 'AUSTA Integration Platform'
+          path: '.'
+          format: 'HTML,JSON,SARIF'
+          args: >
+            --suppression src/test/security/dependency-check-suppressions.xml
+            --failOnCVSS 7
+            --enableExperimental
+            --scan composer.json composer.lock package.json package-lock.json
+            --nodeAuditSkipDevDependencies false
+            --nodePackageSkipDevDependencies false
+
+      - name: Upload dependency check results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: reports/dependency-check-report.sarif
+
+  api-security-scan:
+    name: API Security Scan
+    runs-on: ubuntu-latest
+    needs: dependency-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: ZAP API Scan
+        uses: zaproxy/action-api-scan@v0.4.0
+        with:
+          token: ${{ secrets.ZAPPROXY_TOKEN }}
+          format: openapi
+          target: 'https://austa-platform.com/api/v1'
+          rules_file_name: 'src/test/security/zap-api-scan.conf'
+          cmd_options: '-I'
+          allow_issue_writing: true
+          fail_action: true
+          issue_title: 'ZAP API Scan Report'
+          markdown_report: true
+
+      - name: Upload ZAP API scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: zap-api-scan-results
+          path: reports/zap-api
+
+  full-security-scan:
+    name: Full Security Assessment
+    runs-on: ubuntu-latest
+    needs: api-security-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.4.0
+        with:
+          token: ${{ secrets.ZAPPROXY_TOKEN }}
+          target: 'https://austa-platform.com'
+          rules_file_name: 'src/test/security/zap-full-scan.conf'
+          cmd_options: '-j -I'
+          allow_issue_writing: true
+          fail_action: true
+          issue_title: 'ZAP Full Scan Report'
+          markdown_report: true
+
+      - name: Upload ZAP full scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: zap-full-scan-results
+          path: reports/zap-full
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          languages: javascript, typescript, php
+          queries: security-extended, security-and-quality
+
+  security-report:
+    name: Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [dependency-check, api-security-scan, full-security-scan]
+    if: always()
+    steps:
+      - name: Download all scan results
+        uses: actions/download-artifact@v3
+        with:
+          path: scan-results
+
+      - name: Generate consolidated report
+        run: |
+          echo "# Security Scan Report" > security-report.md
+          echo "## Scan Summary" >> security-report.md
+          echo "- Dependency Check: ${{ needs.dependency-check.result }}" >> security-report.md
+          echo "- API Security Scan: ${{ needs.api-security-scan.result }}" >> security-report.md
+          echo "- Full Security Scan: ${{ needs.full-security-scan.result }}" >> security-report.md
+
+      - name: Create Pull Request Comment
+        uses: peter-evans/create-or-update-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: security-report.md
+
+      - name: Upload consolidated report
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-scan-report
+          path: security-report.md
+          retention-days: 30
+
+      - name: Check for critical vulnerabilities
+        if: ${{ needs.dependency-check.result == 'failure' || needs.api-security-scan.result == 'failure' || needs.full-security-scan.result == 'failure' }}
+        run: |
+          echo "Critical security vulnerabilities found!"
+          exit 1
