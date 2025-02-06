@@ -1,0 +1,192 @@
+name: Release Management
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic release version'
+        required: true
+        pattern: '^v\d+\.\d+\.\d+$'
+      environment:
+        description: 'Target deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      compliance_level:
+        description: 'Required compliance level'
+        required: true
+        default: 'HIPAA_GDPR_LGPD'
+        type: choice
+        options:
+          - HIPAA_GDPR_LGPD
+          - HIPAA_GDPR
+          - HIPAA
+
+env:
+  AWS_REGION: us-east-1
+  GCP_REGION: southamerica-east1
+  DOCKER_BUILDKIT: 1
+  COMPLIANCE_LEVEL: HIPAA_GDPR_LGPD
+  SECURITY_SCAN_LEVEL: HIGH
+  DEPLOYMENT_STRATEGY: BLUE_GREEN
+  HEALTH_CHECK_THRESHOLD: 99.9
+
+jobs:
+  prepare_release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    outputs:
+      release_tag: ${{ steps.release_info.outputs.tag }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
+
+      - name: Get release info
+        id: release_info
+        run: |
+          VERSION=${{ github.event.inputs.version || github.event.release.tag_name }}
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Preparing release ${VERSION}"
+
+      - name: Run dependency review
+        uses: actions/dependency-review-action@v3.1.0
+        with:
+          fail-on-severity: high
+
+      - name: Validate security requirements
+        uses: ./.github/actions/security-validation
+        with:
+          compliance_level: ${{ env.COMPLIANCE_LEVEL }}
+          security_level: ${{ env.SECURITY_SCAN_LEVEL }}
+
+      - name: Run backend CI
+        uses: ./.github/workflows/backend-ci.yml
+        with:
+          environment: ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Run frontend CI
+        uses: ./.github/workflows/frontend-ci.yml
+        with:
+          environment: ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Run infrastructure CI
+        uses: ./.github/workflows/infrastructure-ci.yml
+        with:
+          environment: ${{ github.event.inputs.environment || 'staging' }}
+
+  deploy_release:
+    name: Deploy Release
+    needs: prepare_release
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Configure GCP credentials
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2.9.1
+        with:
+          version: latest
+          buildkitd-flags: --debug
+
+      - name: Login to ECR
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ${{ secrets.AWS_ECR_REGISTRY }}
+
+      - name: Deploy infrastructure
+        run: |
+          cd infrastructure/aws
+          terraform init
+          terraform apply -auto-approve \
+            -var="environment=${{ github.event.inputs.environment || 'staging' }}" \
+            -var="version=${{ needs.prepare_release.outputs.release_tag }}"
+
+      - name: Deploy backend services
+        run: |
+          # Blue/Green deployment logic for backend services
+          ./scripts/deploy-backend.sh \
+            --version ${{ needs.prepare_release.outputs.release_tag }} \
+            --environment ${{ github.event.inputs.environment || 'staging' }} \
+            --strategy ${{ env.DEPLOYMENT_STRATEGY }}
+
+      - name: Deploy frontend assets
+        run: |
+          # Blue/Green deployment logic for frontend assets
+          ./scripts/deploy-frontend.sh \
+            --version ${{ needs.prepare_release.outputs.release_tag }} \
+            --environment ${{ github.event.inputs.environment || 'staging' }} \
+            --cdn-invalidation
+
+      - name: Health check
+        run: |
+          ./scripts/health-check.sh \
+            --environment ${{ github.event.inputs.environment || 'staging' }} \
+            --threshold ${{ env.HEALTH_CHECK_THRESHOLD }}
+
+  validate_deployment:
+    name: Validate Deployment
+    needs: [prepare_release, deploy_release]
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    
+    steps:
+      - name: Run compliance checks
+        run: |
+          ./scripts/compliance-check.sh \
+            --level ${{ env.COMPLIANCE_LEVEL }} \
+            --environment ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Run security scan
+        run: |
+          ./scripts/security-scan.sh \
+            --level ${{ env.SECURITY_SCAN_LEVEL }} \
+            --environment ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Validate metrics
+        run: |
+          ./scripts/validate-metrics.sh \
+            --environment ${{ github.event.inputs.environment || 'staging' }} \
+            --threshold ${{ env.HEALTH_CHECK_THRESHOLD }}
+
+      - name: Generate validation report
+        run: |
+          ./scripts/generate-validation-report.sh \
+            --version ${{ needs.prepare_release.outputs.release_tag }} \
+            --environment ${{ github.event.inputs.environment || 'staging' }}
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-report
+          path: validation-report.json
+          retention-days: 30
+
+permissions:
+  contents: read
+  id-token: write
+  deployments: write
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
