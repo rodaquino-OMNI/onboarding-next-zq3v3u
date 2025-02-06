@@ -1,0 +1,171 @@
+// @angular/material/theming v15.0.0
+@use '@angular/material/theming' as mat;
+// @ionic/angular v6.0.0
+@use '@ionic/angular' as ionic;
+@use './_variables' as vars;
+
+// =============================================================================
+// Theme System Configuration
+// =============================================================================
+
+// Generate Material Typography Config
+$custom-typography-config: mat.define-typography-config(
+  $font-family: map-get(vars.$typography, font-family),
+  $headline-1: mat.define-typography-level(96px, 96px, map-get(vars.$typography, weights, light)),
+  $headline-2: mat.define-typography-level(60px, 60px, map-get(vars.$typography, weights, light)),
+  $headline-3: mat.define-typography-level(48px, 48px, map-get(vars.$typography, weights, regular)),
+  $headline-4: mat.define-typography-level(34px, 40px, map-get(vars.$typography, weights, regular)),
+  $headline-5: mat.define-typography-level(24px, 32px, map-get(vars.$typography, weights, regular)),
+  $headline-6: mat.define-typography-level(20px, 32px, map-get(vars.$typography, weights, medium)),
+  $body-1: mat.define-typography-level(16px, 24px, map-get(vars.$typography, weights, regular)),
+  $body-2: mat.define-typography-level(14px, 20px, map-get(vars.$typography, weights, regular)),
+  $caption: mat.define-typography-level(12px, 20px, map-get(vars.$typography, weights, regular)),
+  $button: mat.define-typography-level(14px, 14px, map-get(vars.$typography, weights, medium))
+);
+
+// Generate Material Theme Configurations
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: mat.define-palette(mat.$blue-palette, 500),
+    accent: mat.define-palette(mat.$pink-palette, A200, A100, A400),
+    warn: mat.define-palette(mat.$red-palette, 500)
+  ),
+  typography: $custom-typography-config,
+  density: 0
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: mat.define-palette(mat.$blue-palette, 500),
+    accent: mat.define-palette(mat.$pink-palette, A200, A100, A400),
+    warn: mat.define-palette(mat.$red-palette, 500)
+  ),
+  typography: $custom-typography-config,
+  density: 0
+));
+
+// =============================================================================
+// Theme Mixins
+// =============================================================================
+
+@function validate-contrast-ratio($background, $foreground) {
+  $luminance-bg: mat.luminance($background);
+  $luminance-fg: mat.luminance($foreground);
+  $contrast-ratio: ($luminance-bg + 0.05) / ($luminance-fg + 0.05);
+  @if $contrast-ratio < 1 {
+    $contrast-ratio: 1 / $contrast-ratio;
+  }
+  @return $contrast-ratio >= 7; // WCAG AAA requirement
+}
+
+@mixin apply-theme-variables($theme-mode: 'light', $system-preference: true) {
+  $theme: if($theme-mode == 'dark', $dark-theme, $light-theme);
+  $colors: vars.$colors;
+
+  :root {
+    // Core theme colors
+    --primary: #{map-get($colors, primary)};
+    --primary-light: #{lighten(map-get($colors, primary), 15%)};
+    --primary-dark: #{darken(map-get($colors, primary), 15%)};
+    --secondary: #{map-get($colors, secondary)};
+
+    // Background and surface colors
+    @if $theme-mode == 'dark' {
+      --background: #{map-get($colors, background, dark)};
+      --surface: #{map-get($colors, surface, dark)};
+      --text-primary: #{map-get($colors, text, primary, dark)};
+      --text-secondary: #{map-get($colors, text, secondary, dark)};
+    } @else {
+      --background: #{map-get($colors, background, light)};
+      --surface: #{map-get($colors, surface, light)};
+      --text-primary: #{map-get($colors, text, primary, light)};
+      --text-secondary: #{map-get($colors, text, secondary, light)};
+    }
+
+    // State colors
+    --success: #{map-get($colors, state, success)};
+    --warning: #{map-get($colors, state, warning)};
+    --error: #{map-get($colors, state, error)};
+    --info: #{map-get($colors, state, info)};
+
+    // Interactive states
+    --hover-opacity: #{map-get($colors, opacity, hover)};
+    --focus-opacity: #{map-get($colors, opacity, focus)};
+    --selected-opacity: #{map-get($colors, opacity, selected)};
+    --disabled-opacity: #{map-get($colors, opacity, disabled)};
+
+    // Focus ring
+    --focus-ring-color: #{rgba(map-get($colors, primary), 0.25)};
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 2px;
+  }
+
+  // System preference detection
+  @if $system-preference {
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #{map-get($colors, background, dark)};
+        --surface: #{map-get($colors, surface, dark)};
+        --text-primary: #{map-get($colors, text, primary, dark)};
+        --text-secondary: #{map-get($colors, text, secondary, dark)};
+      }
+    }
+  }
+
+  // Angular Material theme integration
+  @include mat.all-component-themes($theme);
+
+  // Ionic theme integration
+  :root {
+    --ion-color-primary: var(--primary);
+    --ion-color-primary-contrast: var(--text-primary);
+    --ion-color-secondary: var(--secondary);
+    --ion-background-color: var(--background);
+    --ion-text-color: var(--text-primary);
+    --ion-toolbar-background: var(--surface);
+    --ion-item-background: var(--surface);
+    --ion-border-color: var(--text-secondary);
+  }
+
+  // Accessibility enhancements
+  :focus {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  // High contrast mode support
+  @media (forced-colors: active) {
+    :root {
+      --primary: CanvasText;
+      --secondary: CanvasText;
+      --background: Canvas;
+      --surface: Canvas;
+      --text-primary: CanvasText;
+      --text-secondary: CanvasText;
+    }
+  }
+}
+
+// =============================================================================
+// Theme Transitions
+// =============================================================================
+
+@mixin theme-transition {
+  * {
+    transition: background-color 200ms ease-in-out,
+                color 200ms ease-in-out,
+                border-color 200ms ease-in-out,
+                box-shadow 200ms ease-in-out;
+  }
+}
+
+// Apply default light theme
+@include apply-theme-variables('light', true);
+@include theme-transition;
+
+// Export theme configurations
+:export {
+  lightTheme: $light-theme;
+  darkTheme: $dark-theme;
+  customTypography: $custom-typography-config;
+}
