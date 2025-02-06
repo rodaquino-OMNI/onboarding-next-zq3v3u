@@ -1,0 +1,42 @@
+[Binary PNG Image File with the following specifications]
+
+Image Properties:
+- Dimensions: 192x192 pixels
+- Format: PNG
+- Color Space: RGB with alpha channel (transparency)
+- Purpose: maskable any
+- Safe Zone: 40% central area (77x77 pixels)
+- Max File Size: 10KB
+- Compression: Lossless PNG optimization
+- Color Profile: sRGB IEC61966-2.1
+
+Maskable Icon Requirements:
+- Primary content contained within 40% safe zone
+- Full bleed background extending to edges
+- No important visual elements in corner regions
+- Smooth edges for circular cropping
+
+Accessibility Features:
+- Minimum 4.5:1 contrast ratio for essential elements
+- Recognizable in high-contrast mode
+- Distinct appearance in both light/dark themes
+
+Technical Metadata:
+- Cache-Control: public, max-age=31536000
+- Content-Type: image/png
+- Purpose: maskable any
+- Sizes: 192x192
+
+Browser Support:
+Chrome >= 45
+Firefox >= 44
+Safari >= 11.1
+Edge >= 17
+
+PWA Manifest Configuration:
+{
+  "src": "assets/icons/icon-192x192.png",
+  "sizes": "192x192",
+  "type": "image/png",
+  "purpose": "maskable any"
+}
