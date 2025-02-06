@@ -1,0 +1,85 @@
+# AWS Primary Region Configuration
+aws_region = "us-east-1"
+aws_profile = "<CHANGE_ME>"
+vpc_cidr = "10.0.0.0/16"
+environment = "production"
+domain_name = "austa-platform.com"
+
+# AWS Resource Configuration
+rds_instance_class = "db.r6g.xlarge"
+ecs_container_memory = 4096
+ecs_container_cpu = 2048
+backup_retention_days = 30
+multi_az_enabled = true
+encryption_enabled = true
+
+# AWS Auto-scaling Configuration
+min_capacity = 3
+max_capacity = 10
+elasticache_node_type = "cache.r6g.xlarge"
+
+# GCP Disaster Recovery Configuration
+project_id = "<CHANGE_ME>"
+gcp_region = "southamerica-east1"
+gke_node_pool_size = {
+  min_node_count = 3
+  max_node_count = 10
+  machine_type = "e2-standard-4"
+}
+db_instance_tier = "db-custom-8-16384"
+redis_memory_size_gb = 4
+
+# Security Configuration
+security_settings = {
+  enable_waf = true
+  enable_ssl = true
+  enable_vpc_flow_logs = true
+  enable_audit_logging = true
+  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  backup_encryption_key = "<CHANGE_ME>"
+}
+
+# Common Tags
+tags = {
+  Project = "austa-integration-platform"
+  Environment = "production"
+  ManagedBy = "terraform"
+  BusinessUnit = "healthcare"
+  DataClassification = "confidential"
+  ComplianceScope = "hipaa-gdpr-lgpd"
+}
+
+# Monitoring Configuration
+enable_enhanced_monitoring = true
+cloudwatch_retention_days = 90
+log_shipping_enabled = true
+
+# Storage Configuration
+s3_versioning = true
+lifecycle_rules = {
+  transition_glacier_days = 90
+  expiration_days = 365
+}
+
+# Network Configuration
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+public_subnet_cidrs = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+
+# Backup Configuration
+backup_settings = {
+  rds_backup_window = "03:00-04:00"
+  rds_maintenance_window = "Mon:04:00-Mon:05:00"
+  enable_cross_region_backup = true
+  backup_regions = ["us-west-2"]
+}
+
+# WAF Configuration
+waf_rules = {
+  ip_rate_limit = 2000
+  request_size_limit = "16KB"
+  enable_sql_injection_protection = true
+  enable_xss_protection = true
+  enable_geo_match = true
+  blocked_countries = ["KP", "IR"]
+}
