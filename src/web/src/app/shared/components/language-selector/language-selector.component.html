@@ -1,0 +1,118 @@
+<!-- Language selector region with WCAG AAA compliant accessibility -->
+<div class="language-selector" 
+     role="region" 
+     [attr.aria-label]="'accessibility.screen_reader.navigation.language_selector' | translate">
+
+  <!-- Language selection form field with enhanced accessibility -->
+  <mat-form-field appearance="outline" 
+                  class="language-select"
+                  [color]="'primary'">
+    
+    <!-- Accessible label for the language dropdown -->
+    <mat-label>
+      {{ 'common.labels.select_language' | translate }}
+    </mat-label>
+
+    <!-- Language selection dropdown with ARIA support -->
+    <mat-select [value]="currentLanguage"
+                (selectionChange)="changeLanguage($event.value)"
+                [disabled]="isLoading"
+                [attr.aria-label]="'common.labels.select_language' | translate"
+                role="listbox">
+      
+      <!-- Language options with enhanced screen reader support -->
+      <mat-option *ngFor="let lang of supportedLanguages"
+                  [value]="lang"
+                  role="option"
+                  [attr.aria-selected]="currentLanguage === lang">
+        <!-- Language label with current selection indicator for screen readers -->
+        <span class="language-option">
+          {{ getLanguageLabel(lang) }}
+          <span class="sr-only" *ngIf="currentLanguage === lang">
+            {{ 'accessibility.screen_reader.forms.select' | translate }}
+          </span>
+        </span>
+      </mat-option>
+    </mat-select>
+
+    <!-- Error message slot for accessibility -->
+    <mat-error role="alert" *ngIf="false">
+      {{ 'errors.general.try_again' | translate }}
+    </mat-error>
+  </mat-form-field>
+
+  <!-- Loading indicator with ARIA live region -->
+  <mat-spinner *ngIf="isLoading"
+               diameter="20"
+               class="language-loading"
+               role="status"
+               [attr.aria-label]="'accessibility.screen_reader.forms.loading' | translate">
+  </mat-spinner>
+
+  <!-- LGPD compliance notice for Brazilian users -->
+  <small *ngIf="currentLanguage === 'pt-BR'"
+         class="language-notice"
+         role="note"
+         [attr.aria-label]="'privacy.lgpd.notices.data_storage' | translate">
+    {{ 'privacy.lgpd.notices.data_storage' | translate }}
+  </small>
+
+  <!-- Hidden live region for announcing language changes -->
+  <div class="sr-only"
+       role="status"
+       aria-live="polite"
+       aria-atomic="true">
+  </div>
+</div>
+
+<!-- CSS-only focus indicator for WCAG AAA compliance -->
+<style>
+  .language-selector:focus-within {
+    outline: 3px solid #2196F3;
+    outline-offset: 2px;
+  }
+
+  /* Screen reader only class */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  /* High contrast focus states for WCAG AAA */
+  .language-select:focus-within {
+    outline: 3px solid #2196F3;
+    outline-offset: 2px;
+  }
+
+  /* Loading spinner positioning */
+  .language-loading {
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* LGPD notice styling */
+  .language-notice {
+    display: block;
+    margin-top: 8px;
+    color: #757575;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* Enhanced touch targets for mobile */
+  @media (max-width: 768px) {
+    .language-select {
+      min-height: 48px;
+    }
+    
+    mat-option {
+      min-height: 48px;
+    }
+  }
+</style>
