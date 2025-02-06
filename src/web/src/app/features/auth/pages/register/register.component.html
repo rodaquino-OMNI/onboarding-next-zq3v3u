@@ -1,0 +1,148 @@
+<div class="register-container" role="main" [attr.aria-label]="'REGISTER.TITLE' | translate">
+  <!-- Header Section -->
+  <div class="register-header">
+    <h1 class="mat-display-1">{{ 'REGISTER.TITLE' | translate }}</h1>
+    <p class="mat-subtitle-1">{{ 'REGISTER.SUBTITLE' | translate }}</p>
+  </div>
+
+  <!-- Language Selector -->
+  <div class="language-selector">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'COMMON.LANGUAGE' | translate }}</mat-label>
+      <mat-select [value]="currentLanguage" (selectionChange)="onLanguageChange($event)">
+        <mat-option *ngFor="let lang of supportedLanguages" [value]="lang.code">
+          {{ lang.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Registration Form -->
+  <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Email Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>{{ 'REGISTER.EMAIL' | translate }}</mat-label>
+      <input matInput
+             type="email"
+             formControlName="email"
+             required
+             autocomplete="email"
+             [placeholder]="'REGISTER.EMAIL_PLACEHOLDER' | translate"
+             [attr.aria-label]="'REGISTER.EMAIL' | translate"
+             [attr.aria-required]="true"
+             [attr.aria-invalid]="registerForm.get('email').invalid && registerForm.get('email').touched">
+      <mat-error *ngIf="registerForm.get('email').errors?.required">
+        {{ 'REGISTER.EMAIL_REQUIRED' | translate }}
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('email').errors?.email">
+        {{ 'REGISTER.EMAIL_INVALID' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>{{ 'REGISTER.PASSWORD' | translate }}</mat-label>
+      <input matInput
+             [type]="hidePassword ? 'password' : 'text'"
+             formControlName="password"
+             required
+             autocomplete="new-password"
+             [placeholder]="'REGISTER.PASSWORD_PLACEHOLDER' | translate"
+             [attr.aria-label]="'REGISTER.PASSWORD' | translate"
+             [attr.aria-required]="true"
+             [attr.aria-invalid]="registerForm.get('password').invalid && registerForm.get('password').touched">
+      <button mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hidePassword = !hidePassword"
+              [attr.aria-label]="hidePassword ? 'COMMON.SHOW_PASSWORD' : 'COMMON.HIDE_PASSWORD' | translate">
+        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('password').errors?.required">
+        {{ 'REGISTER.PASSWORD_REQUIRED' | translate }}
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('password').errors?.minlength">
+        {{ 'REGISTER.PASSWORD_MIN_LENGTH' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password Strength Indicator -->
+    <ngx-password-strength-meter
+      [password]="registerForm.get('password').value"
+      [enableFeedback]="true"
+      [colors]="passwordStrengthColors"
+      [feedbackTexts]="passwordFeedbackTexts | translate"
+      aria-live="polite">
+    </ngx-password-strength-meter>
+
+    <!-- Confirm Password Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>{{ 'REGISTER.CONFIRM_PASSWORD' | translate }}</mat-label>
+      <input matInput
+             [type]="hideConfirmPassword ? 'password' : 'text'"
+             formControlName="confirmPassword"
+             required
+             autocomplete="new-password"
+             [placeholder]="'REGISTER.CONFIRM_PASSWORD_PLACEHOLDER' | translate"
+             [attr.aria-label]="'REGISTER.CONFIRM_PASSWORD' | translate"
+             [attr.aria-required]="true"
+             [attr.aria-invalid]="registerForm.get('confirmPassword').invalid && registerForm.get('confirmPassword').touched">
+      <button mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hideConfirmPassword = !hideConfirmPassword"
+              [attr.aria-label]="hideConfirmPassword ? 'COMMON.SHOW_PASSWORD' : 'COMMON.HIDE_PASSWORD' | translate">
+        <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('confirmPassword').errors?.required">
+        {{ 'REGISTER.CONFIRM_PASSWORD_REQUIRED' | translate }}
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('confirmPassword').errors?.passwordMismatch">
+        {{ 'REGISTER.PASSWORD_MISMATCH' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Terms and Privacy Policy -->
+    <mat-checkbox formControlName="termsAccepted"
+                  class="terms-checkbox"
+                  color="primary"
+                  required
+                  [attr.aria-required]="true">
+      <span [innerHTML]="'REGISTER.TERMS_ACCEPTANCE' | translate"></span>
+    </mat-checkbox>
+    <mat-error *ngIf="registerForm.get('termsAccepted').errors?.required && registerForm.get('termsAccepted').touched"
+               class="terms-error">
+      {{ 'REGISTER.TERMS_REQUIRED' | translate }}
+    </mat-error>
+
+    <!-- Submit Button -->
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            class="submit-button"
+            [disabled]="registerForm.invalid || isLoading"
+            [attr.aria-busy]="isLoading">
+      <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+      {{ 'REGISTER.SUBMIT' | translate }}
+    </button>
+
+    <!-- Login Link -->
+    <div class="login-link">
+      <a mat-button
+         routerLink="/auth/login"
+         color="primary"
+         [attr.aria-label]="'REGISTER.LOGIN_LINK' | translate">
+        {{ 'REGISTER.LOGIN_LINK' | translate }}
+      </a>
+    </div>
+  </form>
+
+  <!-- Alert Messages -->
+  <app-alert *ngIf="errorMessage"
+             [message]="errorMessage"
+             type="error"
+             [dismissible]="true"
+             (closed)="clearError()"
+             class="alert-message">
+  </app-alert>
+</div>
