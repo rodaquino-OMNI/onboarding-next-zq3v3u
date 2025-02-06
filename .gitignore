@@ -1,0 +1,116 @@
+node_modules/
+vendor/
+package-lock.json
+composer.lock
+yarn.lock
+
+# Security and Compliance
+**/*.key
+**/*.pem
+**/*.crt
+**/*.p12
+**/*.pfx
+**/*audit.log
+**/*security-scan*
+**/*penetration-test*
+**/*vulnerability*
+
+# Environment and Configuration
+.env
+.env.*
+!.env.example
+**/*config*.json
+**/*secrets*.yaml
+
+# PHI and Sensitive Data
+**/*patient*.json
+**/*health*.data
+**/*medical*.log
+**/*phi*.dump
+
+# Testing and Coverage
+coverage/
+**/*test-results*/
+cypress/videos/
+cypress/screenshots/
+.phpunit.result.cache
+
+# Logs and Debugging
+**/*.log
+**/*debug*.log
+**/*error*.log
+**/*access*.log
+
+# Build and Compilation
+dist/
+build/
+www/
+.angular/
+.ionic/
+
+# IDE and Editor
+.idea/
+.vscode/
+*.sublime-*
+*.swp
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Storage and Cache
+storage/app/public/*
+!storage/app/public/.gitkeep
+storage/framework/cache/*
+!storage/framework/cache/.gitkeep
+storage/framework/sessions/*
+!storage/framework/sessions/.gitkeep
+storage/framework/views/*
+!storage/framework/views/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
+storage/app/hipaa/*
+!storage/app/hipaa/.gitkeep
+
+# Public Storage
+public/storage
+public/hot
+public/build
+public/css
+public/js
+public/mix-manifest.json
+
+# Laravel Specific
+Homestead.json
+Homestead.yaml
+auth.json
+/.vagrant
+
+# Local Development
+docker-compose.override.yml
+/docker/data
+.docker-sync
+
+# Sensitive Data Directories
+/storage/app/phi/*
+!/storage/app/phi/.gitkeep
+/storage/app/encrypted/*
+!/storage/app/encrypted/.gitkeep
+/storage/app/audit/*
+!/storage/app/audit/.gitkeep
+
+# Angular/Ionic Specific
+platforms/
+plugins/
+*.js.map
+*.css.map
+.sass-cache/
+tmp/
+temp/
+src/environments/*.ts
+!src/environments/environment.ts
+!src/environments/environment.prod.ts
+!src/environments/environment.staging.ts
+aws-exports.js
+google-services.json
+GoogleService-Info.plist
