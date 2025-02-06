@@ -1,0 +1,178 @@
+// @angular/material/theming v15.0.0
+@use '@angular/material/theming' as mat;
+
+// @ionic/angular v6.0.0
+@use '@ionic/angular' as ionic;
+
+// Import core design system variables
+@use '../assets/scss/_variables' as vars;
+@use './variables' as theme;
+
+// =============================================================================
+// Dark Theme Implementation - WCAG AAA Compliant
+// =============================================================================
+
+// Dark theme color system with WCAG AAA compliance (7:1 contrast ratio)
+:root[data-theme='dark'] {
+  // Core colors
+  --primary: #{map-get(vars.$colors, primary)};
+  --primary-lighter: #{lighten(map-get(vars.$colors, primary), 20%)};
+  --primary-darker: #{darken(map-get(vars.$colors, primary), 15%)};
+  
+  --secondary: #{map-get(vars.$colors, secondary)};
+  --secondary-lighter: #{lighten(map-get(vars.$colors, secondary), 20%)};
+  --secondary-darker: #{darken(map-get(vars.$colors, secondary), 15%)};
+  
+  // Background system
+  --background: #{map-get(vars.$colors, background, dark)};
+  --surface: #{map-get(vars.$colors, surface, dark)};
+  --surface-lighter: #{lighten(map-get(vars.$colors, surface, dark), 5%)};
+  --surface-darker: #{darken(map-get(vars.$colors, surface, dark), 5%)};
+  
+  // Typography
+  --text-primary: #{map-get(vars.$colors, text, primary, dark)};
+  --text-secondary: #{map-get(vars.$colors, text, secondary, dark)};
+  --text-disabled: #{rgba(255, 255, 255, map-get(vars.$colors, opacity, disabled))};
+  
+  // State colors
+  --error: #{map-get(vars.$colors, state, error)};
+  --success: #{map-get(vars.$colors, state, success)};
+  --warning: #{map-get(vars.$colors, state, warning)};
+  --info: #{map-get(vars.$colors, state, info)};
+  
+  // UI elements
+  --border: #{rgba(255, 255, 255, 0.12)};
+  --overlay: #{rgba(0, 0, 0, 0.32)};
+  --focus-ring: #{rgba(map-get(vars.$colors, primary), 0.25)};
+}
+
+// Material Dark Theme Configuration
+$dark-primary: mat.define-palette(mat.$blue-palette, 500, 300, 700);
+$dark-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$dark-warn: mat.define-palette(mat.$red-palette, 500);
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $dark-primary,
+    accent: $dark-accent,
+    warn: $dark-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: map-get(vars.$typography, font-family),
+    $body-1: mat.define-typography-level(
+      map-get(vars.$typography, base-size),
+      map-get(vars.$typography, line-heights, body),
+      map-get(vars.$typography, weights, regular)
+    )
+  )
+));
+
+// Custom elevation system for dark theme
+$dark-elevation-color: #000000;
+$dark-elevation-opacity-map: (
+  0: 0,
+  1: 0.05,
+  2: 0.07,
+  3: 0.08,
+  4: 0.09,
+  6: 0.11,
+  8: 0.12,
+  12: 0.14,
+  16: 0.15,
+  24: 0.16
+);
+
+@mixin generate-elevation-styles($level) {
+  $elevation-opacity: map-get($dark-elevation-opacity-map, $level);
+  box-shadow: 0px #{$level}px #{$level * 2}px rgba($dark-elevation-color, $elevation-opacity);
+}
+
+// Apply dark theme styles
+@mixin apply-dark-theme {
+  // Apply Material dark theme
+  @include mat.all-component-themes($dark-theme);
+  
+  // Ionic dark theme integration
+  :root[data-theme='dark'] {
+    // Background colors
+    --ion-background-color: var(--background);
+    --ion-background-color-rgb: 18, 18, 18;
+    
+    // Text colors
+    --ion-text-color: var(--text-primary);
+    --ion-text-color-rgb: 255, 255, 255;
+    
+    // Border colors
+    --ion-border-color: var(--border);
+    
+    // Component backgrounds
+    --ion-item-background: var(--surface);
+    --ion-toolbar-background: var(--surface);
+    --ion-tab-bar-background: var(--surface);
+    --ion-card-background: var(--surface);
+    
+    // Overlay colors
+    --ion-overlay-background-color: var(--surface-lighter);
+    --ion-backdrop-color: var(--overlay);
+    --ion-box-shadow-color: var(--overlay);
+    
+    // Status colors
+    --ion-color-success: var(--success);
+    --ion-color-warning: var(--warning);
+    --ion-color-danger: var(--error);
+    --ion-color-info: var(--info);
+  }
+  
+  // Custom scrollbar styling
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--surface);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface-lighter);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--surface-darker);
+    }
+  }
+  
+  // Component-specific dark styles
+  .mat-app-background {
+    background-color: var(--background);
+  }
+  
+  .mat-card {
+    @include generate-elevation-styles(2);
+    background-color: var(--surface);
+  }
+  
+  .mat-dialog-container {
+    @include generate-elevation-styles(24);
+    background-color: var(--surface);
+  }
+  
+  // Smooth theme transitions
+  * {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+}
+
+// Apply dark theme based on system preference or manual override
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include apply-dark-theme;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include apply-dark-theme;
+}
