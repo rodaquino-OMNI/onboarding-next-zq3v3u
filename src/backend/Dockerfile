@@ -1,8 +1,9 @@
 # Stage 1: Composer dependencies
-FROM composer:2.0 AS composer
+FROM composer:2.5 AS composer
 
 # Copy composer files
-COPY composer.json composer.lock ./
+WORKDIR /app
+COPY composer.json ./
 
 # Install production dependencies with optimized autoloader
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-progress
@@ -56,6 +57,10 @@ RUN mkdir -p /var/www/html/storage/logs \
     /var/www/html/storage/framework/views \
     && chown -R www-data:www-data /var/www/html/storage
 
+# Create PHP log directory
+RUN mkdir -p /var/log/php \
+    && chown -R www-data:www-data /var/log/php
+
 # Copy application code
 COPY --from=composer /app/vendor /var/www/html/vendor
 COPY . /var/www/html
@@ -86,9 +91,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Set up volumes
 VOLUME ["/var/www/html/storage", "/var/log/nginx", "/var/log/php", "/var/log/supervisor"]
-
-# Switch to non-root user
-USER www-data
 
 # Start services using Supervisor
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -9,6 +9,7 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./docker/nginx/ssl:/etc/nginx/ssl:ro
     ports:
+      - "80:80"
       - "443:443"
     depends_on:
       - php-fpm
@@ -16,7 +17,7 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -46,7 +47,7 @@ services:
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
       - ./docker/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
     environment:
-      - APP_ENV=production
+      - APP_ENV=local
       - DB_HOST=mysql
       - REDIS_HOST=redis
       - PHP_MEMORY_LIMIT=512M
@@ -59,7 +60,7 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "php", "artisan", "health:check"]
+      test: ["CMD", "php", "-v"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -115,7 +116,6 @@ services:
     command: >
       redis-server
       --appendonly yes
-      --requirepass ${REDIS_PASSWORD}
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
     ports:
@@ -177,10 +177,6 @@ networks:
 volumes:
   mysql-data:
     driver: local
-    driver_opts:
-      type: none
-      device: /data/mysql
-      o: bind
   redis-data:
     driver: local
   prometheus-data:
